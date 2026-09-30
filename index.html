@@ -676,6 +676,149 @@ tr:hover td {
     margin-bottom:8px;
 }
 
+
+/* ================= AUTHENTICATION ================= */
+
+.auth-screen {
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    background:
+        radial-gradient(circle at 15% 15%,#c7d2fe 0,transparent 30%),
+        radial-gradient(circle at 85% 20%,#ddd6fe 0,transparent 30%),
+        radial-gradient(circle at 50% 90%,#bfdbfe 0,transparent 35%),
+        var(--bg);
+}
+
+body.dark .auth-screen {
+    background:
+        radial-gradient(circle at 15% 15%,rgba(99,102,241,.20) 0,transparent 30%),
+        radial-gradient(circle at 85% 20%,rgba(139,92,246,.18) 0,transparent 30%),
+        var(--bg);
+}
+
+.auth-box {
+    width:min(430px,100%);
+    padding:32px;
+    border-radius:28px;
+    background:var(--glass);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(30px);
+    -webkit-backdrop-filter:blur(30px);
+}
+
+.auth-brand {
+    text-align:center;
+    margin-bottom:24px;
+}
+
+.auth-brand .logo-icon {
+    margin:0 auto 12px;
+}
+
+.auth-brand h1 {
+    font-size:25px;
+    margin-bottom:5px;
+}
+
+.auth-brand p {
+    color:var(--muted);
+    font-size:12px;
+}
+
+.auth-tabs {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    padding:5px;
+    margin-bottom:22px;
+    border-radius:14px;
+    background:rgba(255,255,255,.18);
+    border:1px solid var(--border);
+}
+
+.auth-tab {
+    padding:10px;
+    border-radius:10px;
+    color:var(--muted);
+    background:transparent;
+}
+
+.auth-tab.active {
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+}
+
+.auth-form {
+    display:none;
+}
+
+.auth-form.active {
+    display:block;
+}
+
+.auth-form .form-group {
+    margin-bottom:14px;
+}
+
+.auth-form .btn {
+    width:100%;
+    margin-top:5px;
+}
+
+.auth-message {
+    min-height:18px;
+    margin-top:13px;
+    text-align:center;
+    font-size:12px;
+    color:var(--danger);
+}
+
+.auth-note {
+    margin-top:18px;
+    text-align:center;
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.6;
+}
+
+.logout-btn {
+    margin-left:5px;
+    padding:8px 11px;
+    border-radius:10px;
+    color:var(--text);
+    background:rgba(255,255,255,.2);
+    border:1px solid var(--border);
+    font-size:11px;
+}
+
+.logout-btn:hover {
+    background:rgba(239,68,68,.12);
+    color:var(--danger);
+}
+
+
+/* DATA ACTIONS */
+.data-actions {
+    white-space:nowrap;
+}
+.mini-btn {
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    margin-right:5px;
+    color:var(--text);
+    background:rgba(255,255,255,.16);
+    border:1px solid var(--border);
+    transition:.2s;
+}
+.mini-btn:hover { transform:translateY(-2px); }
+.mini-btn.edit:hover { background:rgba(99,102,241,.18); }
+.mini-btn.delete:hover { background:rgba(239,68,68,.18); }
+
 /* MOBILE */
 
 .mobile-menu {
@@ -757,11 +900,425 @@ tr:hover td {
     }
 }
 </style>
+
+<style id="animated-auth-style">
+/* ===== INTERACTIVE AUTH SCREEN ===== */
+#authScreen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(99,102,241,.22), transparent 28%),
+    radial-gradient(circle at 85% 80%, rgba(14,165,233,.20), transparent 30%),
+    var(--bg, #0f172a);
+  transition: background .6s ease;
+}
+
+#authScreen::before,
+#authScreen::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+#authScreen::before {
+  width: 330px;
+  height: 330px;
+  left: -100px;
+  top: -110px;
+  background: radial-gradient(circle, rgba(99,102,241,.28), transparent 68%);
+  animation: authOrb1 9s ease-in-out infinite alternate;
+}
+
+#authScreen::after {
+  width: 380px;
+  height: 380px;
+  right: -130px;
+  bottom: -150px;
+  background: radial-gradient(circle, rgba(34,211,238,.24), transparent 68%);
+  animation: authOrb2 11s ease-in-out infinite alternate;
+}
+
+.auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: .55;
+  animation: authFloat 7s ease-in-out infinite;
+}
+.auth-orb.one {
+  width: 70px; height: 70px; left: 12%; top: 15%;
+  background: rgba(129,140,248,.20);
+  box-shadow: 0 0 35px rgba(99,102,241,.25);
+}
+.auth-orb.two {
+  width: 42px; height: 42px; right: 16%; top: 18%;
+  background: rgba(45,212,191,.18);
+  animation-delay: -2s;
+}
+.auth-orb.three {
+  width: 95px; height: 95px; left: 18%; bottom: 9%;
+  background: rgba(56,189,248,.13);
+  animation-delay: -4s;
+}
+
+.auth-card {
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0) scale(1);
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease;
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.24),
+    0 0 0 1px rgba(255,255,255,.08),
+    inset 0 1px 0 rgba(255,255,255,.13);
+  animation: authCardIn .75s cubic-bezier(.2,.8,.2,1);
+}
+
+.auth-card:hover {
+  transform: translateY(-3px) scale(1.003);
+  box-shadow:
+    0 38px 100px rgba(0,0,0,.28),
+    0 0 45px rgba(99,102,241,.10),
+    0 0 0 1px rgba(255,255,255,.11),
+    inset 0 1px 0 rgba(255,255,255,.16);
+}
+
+.auth-card::before {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  right: -80px;
+  top: -90px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.auth-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 45%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(129,140,248,.9), rgba(34,211,238,.8), transparent);
+  animation: authScan 3.5s ease-in-out infinite;
+}
+
+.auth-logo {
+  animation: authLogoIn .8s cubic-bezier(.2,.8,.2,1);
+}
+
+.auth-logo .logo-icon {
+  animation: authLogoPulse 3s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(99,102,241,.32);
+}
+
+.auth-tabs {
+  position: relative;
+  padding: 5px;
+  border-radius: 15px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.auth-tabs button {
+  position: relative;
+  z-index: 1;
+  transition: color .3s ease, transform .2s ease, background .3s ease;
+}
+.auth-tabs button:hover {
+  transform: translateY(-1px);
+}
+.auth-tabs button.active {
+  animation: tabPop .35s ease;
+}
+
+.auth-form {
+  animation: authFormIn .42s cubic-bezier(.2,.8,.2,1);
+}
+
+.auth-form.auth-switching {
+  animation: authSwitch .42s cubic-bezier(.2,.8,.2,1);
+}
+
+.auth-form .form-group,
+.auth-form .input-group,
+.auth-form label {
+  animation: fieldIn .5s both;
+}
+.auth-form .form-group:nth-child(1),
+.auth-form .input-group:nth-child(1) { animation-delay: .03s; }
+.auth-form .form-group:nth-child(2),
+.auth-form .input-group:nth-child(2) { animation-delay: .07s; }
+.auth-form .form-group:nth-child(3),
+.auth-form .input-group:nth-child(3) { animation-delay: .11s; }
+.auth-form .form-group:nth-child(4),
+.auth-form .input-group:nth-child(4) { animation-delay: .15s; }
+.auth-form .form-group:nth-child(5),
+.auth-form .input-group:nth-child(5) { animation-delay: .19s; }
+
+.auth-form input {
+  transition:
+    border-color .25s ease,
+    box-shadow .25s ease,
+    transform .25s ease,
+    background .25s ease;
+}
+
+.auth-form input:hover {
+  transform: translateY(-1px);
+}
+
+.auth-form input:focus {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 3px rgba(99,102,241,.12),
+    0 10px 25px rgba(0,0,0,.10);
+}
+
+.auth-submit,
+.auth-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+
+.auth-submit::before,
+.auth-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.26), transparent);
+  transition: left .65s ease;
+  z-index: -1;
+}
+
+.auth-submit:hover::before,
+.auth-btn:hover::before {
+  left: 140%;
+}
+
+.auth-submit:hover,
+.auth-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 12px 30px rgba(99,102,241,.20);
+}
+
+.auth-submit:active,
+.auth-btn:active {
+  transform: translateY(0) scale(.98);
+}
+
+#authMessage {
+  animation: messageIn .35s ease;
+}
+
+.auth-typing {
+  display: inline-block;
+  min-height: 1.2em;
+}
+
+@keyframes authCardIn {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes authLogoIn {
+  from { opacity: 0; transform: translateY(-15px) scale(.85); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes authLogoPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,.22); }
+  50% { box-shadow: 0 0 0 11px rgba(99,102,241,0); }
+}
+@keyframes authFormIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes authSwitch {
+  0% { opacity: .35; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes fieldIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes tabPop {
+  0% { transform: scale(.97); }
+  60% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes authOrb1 {
+  from { transform: translate(0,0) scale(1); }
+  to { transform: translate(70px,55px) scale(1.18); }
+}
+@keyframes authOrb2 {
+  from { transform: translate(0,0) scale(1); }
+  to { transform: translate(-65px,-50px) scale(1.15); }
+}
+@keyframes authFloat {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-22px) rotate(8deg); }
+}
+@keyframes authScan {
+  0%,100% { transform: translateX(-110%); opacity: .15; }
+  45%,55% { transform: translateX(130%); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #authScreen *,
+  #authScreen::before,
+  #authScreen::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
 
-<div class="app">
+<!-- ================= LOGIN / REGISTER ================= -->
+
+<div class="auth-screen" id="authScreen">
+<div class="auth-orb one"></div>
+<div class="auth-orb two"></div>
+<div class="auth-orb three"></div>
+
+
+    <div class="auth-box">
+
+        <div class="auth-brand">
+            <div class="logo-icon">₿</div>
+            <h1>GlassAccount</h1>
+            <p>Sistem akuntansi pribadi & bisnis</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="loginTab" type="button">
+                Login
+            </button>
+            <button class="auth-tab" id="registerTab" type="button">
+                Register
+            </button>
+        </div>
+
+        <form class="auth-form active" id="loginForm">
+
+            <div class="form-group">
+                <label>Email atau Username</label>
+                <input
+                    type="text"
+                    id="loginIdentifier"
+                    placeholder="Masukkan email atau username"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Masukkan password"
+                    autocomplete="current-password"
+                    required>
+            </div>
+
+            <button class="btn" type="submit">
+                🔐 Login
+            </button>
+
+        </form>
+
+        <form class="auth-form" id="registerForm">
+
+            <div class="form-group">
+                <label>Nama Pengguna</label>
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Contoh: Alvin"
+                    autocomplete="name"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Username</label>
+                <input
+                    type="text"
+                    id="registerUsername"
+                    placeholder="Contoh: alvin123"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="nama@email.com"
+                    autocomplete="email"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Minimal 6 karakter"
+                    autocomplete="new-password"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Konfirmasi Password</label>
+                <input
+                    type="password"
+                    id="registerConfirm"
+                    placeholder="Ulangi password"
+                    autocomplete="new-password"
+                    required>
+            </div>
+
+            <button class="btn" type="submit">
+                ✨ Buat Akun
+            </button>
+
+        </form>
+
+        <div class="auth-message" id="authMessage"></div>
+
+        <div class="auth-note">
+            Login dan register dilakukan secara manual tanpa Google.
+            Akun disimpan di browser perangkat ini.
+        </div>
+
+    </div>
+
+</div>
+
+<div class="app" id="appShell">
 
 <!-- ================= SIDEBAR ================= -->
 
@@ -885,15 +1442,19 @@ tr:hover td {
 
             <div class="profile">
 
-                <div class="avatar">
-                    AR
+                <div class="avatar" id="profileAvatar">
+                    U
                 </div>
 
                 <div>
-                    <b>Admin</b>
+                    <b id="profileName">User</b>
                     <br>
-                    <small>Administrator</small>
+                    <small id="profileEmail">-</small>
                 </div>
+
+                <button class="logout-btn" id="logoutBtn" type="button">
+                    Keluar
+                </button>
 
             </div>
 
@@ -1754,6 +2315,7 @@ tr:hover td {
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
                         <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
 
                 </thead>
@@ -1811,6 +2373,7 @@ tr:hover td {
                         <th>Telepon</th>
                         <th>Email</th>
                         <th>Piutang</th>
+                        <th>Aksi</th>
                     </tr>
 
                 </thead>
@@ -1868,6 +2431,7 @@ tr:hover td {
                         <th>Telepon</th>
                         <th>Email</th>
                         <th>Utang</th>
+                        <th>Aksi</th>
                     </tr>
 
                 </thead>
@@ -2269,7 +2833,232 @@ tr:hover td {
 </div>
 
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBiRXplA-a98rWsVwoKwzY2bVLP46eY0Fk",
+    authDomain: "akuntansi-2f406.firebaseapp.com",
+    projectId: "akuntansi-2f406",
+    storageBucket: "akuntansi-2f406.firebasestorage.app",
+    messagingSenderId: "344868725377",
+    appId: "1:344868725377:web:fb4d64717b41aef5022380",
+    measurementId: "G-D3HVVBNKLH"
+};
+
+firebase.initializeApp(firebaseConfig);
+const firebaseAuth = firebase.auth();
+const db = firebase.database();
+
+/* =====================================================
+   AUTHENTICATION - FIREBASE
+===================================================== */
+
+let currentUser = null;
+
+function setAuthMessage(message, success = false) {
+    const el = document.getElementById("authMessage");
+    if(!el) return;
+    el.textContent = message;
+    el.style.color = success ? "var(--success)" : "var(--danger)";
+}
+
+function friendlyFirebaseError(error) {
+    const code = error?.code || "";
+    const messages = {
+        "auth/email-already-in-use": "Email sudah terdaftar.",
+        "auth/invalid-email": "Format email tidak valid.",
+        "auth/weak-password": "Password terlalu lemah. Gunakan minimal 6 karakter.",
+        "auth/invalid-credential": "Email/username atau password salah.",
+        "auth/user-not-found": "Akun tidak ditemukan.",
+        "auth/wrong-password": "Password salah.",
+        "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi nanti.",
+        "PERMISSION_DENIED": "Akses Firebase Realtime Database ditolak. Periksa Realtime Database Rules.",
+        "permission-denied": "Akses Firebase Realtime Database ditolak. Periksa Realtime Database Rules.",
+        "unavailable": "Firebase sedang tidak tersedia. Periksa koneksi internet."
+    };
+    return messages[code] || error?.message || "Terjadi kesalahan Firebase.";
+}
+
+function switchAuth(mode) {
+    const loginMode = mode === "login";
+    document.getElementById("loginTab").classList.toggle("active", loginMode);
+    document.getElementById("registerTab").classList.toggle("active", !loginMode);
+    document.getElementById("loginForm").classList.toggle("active", loginMode);
+    document.getElementById("registerForm").classList.toggle("active", !loginMode);
+    setAuthMessage("");
+}
+
+function updateProfile() {
+    if(!currentUser) return;
+    const name = currentUser.name || currentUser.username || currentUser.email?.split("@")[0] || "User";
+    document.getElementById("profileName").textContent = name;
+    document.getElementById("profileEmail").textContent = currentUser.email || "";
+    document.getElementById("profileAvatar").textContent = name.trim().charAt(0).toUpperCase();
+}
+
+function showApp() {
+    document.getElementById("authScreen").style.display = "none";
+    document.getElementById("appShell").style.display = "flex";
+    updateProfile();
+}
+
+function showAuth() {
+    document.getElementById("authScreen").style.display = "flex";
+    document.getElementById("appShell").style.display = "none";
+    switchAuth("login");
+}
+
+async function getFirebaseProfile(user) {
+    const snap = await db.ref("users/" + user.uid + "/profile").once("value");
+    const profile = snap.val() || {};
+    return { id: user.uid, ...profile, email: user.email || profile.email || "" };
+}
+
+async function findEmailByIdentifier(identifier) {
+    const value = identifier.trim().toLowerCase();
+    if(value.includes("@")) return value;
+    const snap = await db.ref("usernames/" + value).once("value");
+    const record = snap.val();
+    return record?.email || null;
+}
+
+async function loadFirebaseData() {
+    if(!currentUser) return;
+    const snap = await db.ref("users/" + currentUser.id + "/data").once("value");
+    const data = snap.val() || {};
+    transactions = Array.isArray(data.transactions) ? data.transactions : [];
+    products = Array.isArray(data.products) ? data.products : [];
+    customers = Array.isArray(data.customers) ? data.customers : [];
+    suppliers = Array.isArray(data.suppliers) ? data.suppliers : [];
+}
+
+async function persistFirebaseData() {
+    if(!currentUser) return;
+    await db.ref("users/" + currentUser.id + "/data").set({
+        transactions: Array.isArray(transactions) ? transactions : [],
+        products: Array.isArray(products) ? products : [],
+        customers: Array.isArray(customers) ? customers : [],
+        suppliers: Array.isArray(suppliers) ? suppliers : [],
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+}
+
+document.getElementById("loginTab").addEventListener("click", () => switchAuth("login"));
+document.getElementById("registerTab").addEventListener("click", () => switchAuth("register"));
+
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const name = document.getElementById("registerName").value.trim();
+    const username = document.getElementById("registerUsername").value.trim();
+    const usernameLower = username.toLowerCase();
+    const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+    const password = document.getElementById("registerPassword").value;
+    const confirm = document.getElementById("registerConfirm").value;
+
+    if(password.length < 6) return setAuthMessage("Password minimal 6 karakter.");
+    if(password !== confirm) return setAuthMessage("Konfirmasi password tidak cocok.");
+    if(!/^[a-zA-Z0-9_]+$/.test(username)) return setAuthMessage("Username hanya boleh berisi huruf, angka, dan underscore.");
+
+    try {
+        setAuthMessage("Memeriksa username...");
+        const usernameSnap = await db.ref("usernames/" + usernameLower).once("value");
+        if(usernameSnap.exists()) return setAuthMessage("Username sudah terdaftar.");
+
+        setAuthMessage("Membuat akun...");
+        const credential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+        const uid = credential.user.uid;
+
+        await db.ref("users/" + uid).set({
+            profile: { name, username, usernameLower, email, createdAt: firebase.database.ServerValue.TIMESTAMP },
+            data: { transactions: [], products: [], customers: [], suppliers: [], createdAt: firebase.database.ServerValue.TIMESTAMP }
+        });
+        await db.ref("usernames/" + usernameLower).set({ uid, email });
+        setAuthMessage("Akun berhasil dibuat. Membuka dashboard...", true);
+    } catch(error) {
+        setAuthMessage(friendlyFirebaseError(error));
+    }
+});
+
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const identifier = document.getElementById("loginIdentifier").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    try {
+        setAuthMessage("Memeriksa akun...");
+        const email = await findEmailByIdentifier(identifier);
+        if(!email) return setAuthMessage("Username/email atau password salah.");
+        await firebaseAuth.signInWithEmailAndPassword(email, password);
+        setAuthMessage("Login berhasil. Membuka dashboard...", true);
+    } catch(error) {
+        setAuthMessage(friendlyFirebaseError(error));
+    }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async function() {
+    if(!confirm("Yakin ingin keluar dari akun?")) return;
+    try { await persistFirebaseData(); } catch(error) { console.warn("Gagal menyimpan data terakhir:", error); }
+    await firebaseAuth.signOut();
+    currentUser = null;
+    transactions = []; products = []; customers = []; suppliers = [];
+    const sidebar = document.getElementById("sidebar");
+    if(sidebar) sidebar.classList.remove("open");
+    document.getElementById("loginForm")?.reset();
+    document.getElementById("registerForm")?.reset();
+});
+
+firebaseAuth.onAuthStateChanged(async function(user) {
+    if(!user) {
+        currentUser = null;
+        transactions = []; products = []; customers = []; suppliers = [];
+        showAuth();
+        return;
+    }
+    try {
+        currentUser = await getFirebaseProfile(user);
+        await loadFirebaseData();
+        showApp();
+        refreshEverything();
+    } catch(error) {
+        console.error(error);
+        setAuthMessage(friendlyFirebaseError(error));
+        await firebaseAuth.signOut();
+    }
+});
+
+async function restoreSession() {
+    return firebaseAuth.currentUser;
+}
+
+
+/* =====================================================
+   DATA PER AKUN - FIREBASE REALTIME DATABASE
+===================================================== */
+
+function getUserDataRef() {
+    return currentUser ? db.ref("users/" + currentUser.id + "/data") : null;
+}
+
+async function saveMasterData(type, value) {
+    const ref = getUserDataRef();
+    if(!ref) return;
+    try {
+        await ref.child(type).set(Array.isArray(value) ? value : []);
+    } catch(error) {
+        console.error("Gagal menyimpan " + type + ":", error);
+        setAuthMessage(friendlyFirebaseError(error));
+    }
+}
+
+async function loadMasterData() {
+    await loadFirebaseData();
+}
+
+async function saveAllMasterData() {
+    await persistFirebaseData();
+}
 
 /* =====================================================
    DATA
@@ -2334,9 +3123,7 @@ const defaultTransactions = [
 ];
 
 
-let transactions =
-    JSON.parse(localStorage.getItem("glassTransactions"))
-    || defaultTransactions;
+let transactions = [];
 
 
 /* =====================================================
@@ -2615,13 +3402,19 @@ function formatRupiah(number) {
 }
 
 
-function saveData() {
-
-    localStorage.setItem(
-        "glassTransactions",
-        JSON.stringify(transactions)
-    );
-
+async function saveData() {
+    if(!currentUser) return;
+    try {
+        await getUserDataRef().set({
+            transactions: Array.isArray(transactions) ? transactions : [],
+            products: Array.isArray(products) ? products : [],
+            customers: Array.isArray(customers) ? customers : [],
+            suppliers: Array.isArray(suppliers) ? suppliers : [],
+            updatedAt: firebase.database.ServerValue.TIMESTAMP
+        });
+    } catch(error) {
+        console.error("Gagal menyimpan data ke Firebase Realtime Database:", error);
+    }
 }
 
 
@@ -3883,320 +4676,180 @@ function renderCash() {
    PRODUCTS
 ===================================================== */
 
-let products = [
-
-    {
-        code:"PRD001",
-        name:"Produk A",
-        stock:25,
-        buy:50000,
-        sell:85000
-    },
-
-    {
-        code:"PRD002",
-        name:"Produk B",
-        stock:8,
-        buy:75000,
-        sell:120000
-    },
-
-    {
-        code:"PRD003",
-        name:"Produk C",
-        stock:50,
-        buy:30000,
-        sell:55000
-    }
-
-];
-
+let products = [];
 
 function renderProducts() {
-
-    document
-        .getElementById("productTable")
-        .innerHTML =
-
-        products.map(p => `
-
-            <tr>
-
-                <td>
-                    ${p.code}
-                </td>
-
-                <td>
-                    <b>
-                        ${p.name}
-                    </b>
-                </td>
-
-                <td>
-                    ${p.stock}
-                </td>
-
-                <td>
-                    ${formatRupiah(p.buy)}
-                </td>
-
-                <td>
-                    ${formatRupiah(p.sell)}
-                </td>
-
-                <td>
-
-                    <span
-                        class="badge ${
-                            p.stock < 10
-                            ? "out"
-                            : "in"
-                        }">
-
-                        ${
-                            p.stock < 10
-                            ? "Stok Menipis"
-                            : "Tersedia"
-                        }
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-        `).join("");
-
+    const table = document.getElementById("productTable");
+    if(!products.length) {
+        table.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📦</div>Belum ada produk.</div></td></tr>`;
+        return;
+    }
+    table.innerHTML = products.map((p,i) => `
+        <tr>
+            <td>${p.code}</td>
+            <td><b>${p.name}</b></td>
+            <td>${p.stock}</td>
+            <td>${formatRupiah(p.buy)}</td>
+            <td>${formatRupiah(p.sell)}</td>
+            <td><span class="badge ${p.stock < 10 ? "out" : "in"}">${p.stock < 10 ? "Stok Menipis" : "Tersedia"}</span></td>
+            <td class="data-actions">
+                <button class="mini-btn edit" onclick="editProduct(${i})">✏️</button>
+                <button class="mini-btn delete" onclick="deleteProduct(${i})">🗑️</button>
+            </td>
+        </tr>`).join("");
 }
-
 
 function addProduct() {
-
-    const name =
-        prompt("Nama produk:");
-
-    if(!name)
-        return;
-
-
-    const stock =
-        Number(
-            prompt("Jumlah stok:") || 0
-        );
-
-
-    const buy =
-        Number(
-            prompt("Harga beli:") || 0
-        );
-
-
-    const sell =
-        Number(
-            prompt("Harga jual:") || 0
-        );
-
-
-    products.push({
-
-        code:
-            "PRD" +
-            String(
-                products.length + 1
-            ).padStart(3,"0"),
-
-        name,
-        stock,
-        buy,
-        sell
-
-    });
-
-
+    const name = prompt("Nama produk:");
+    if(!name || !name.trim()) return;
+    const stock = Number(prompt("Jumlah stok:") || 0);
+    const buy = Number(prompt("Harga beli:") || 0);
+    const sell = Number(prompt("Harga jual:") || 0);
+    if([stock,buy,sell].some(v => v < 0 || !Number.isFinite(v))) return alert("Nilai angka tidak valid.");
+    products.push({code:"PRD" + String(products.length + 1).padStart(3,"0"),name:name.trim(),stock,buy,sell});
+    saveMasterData("products", products);
     renderProducts();
-
 }
 
+function editProduct(i) {
+    const p = products[i];
+    if(!p) return;
+    const name = prompt("Nama produk:", p.name);
+    if(!name || !name.trim()) return;
+    const stock = Number(prompt("Jumlah stok:", p.stock));
+    const buy = Number(prompt("Harga beli:", p.buy));
+    const sell = Number(prompt("Harga jual:", p.sell));
+    if([stock,buy,sell].some(v => v < 0 || !Number.isFinite(v))) return alert("Nilai angka tidak valid.");
+    products[i] = {...p,name:name.trim(),stock,buy,sell};
+    saveMasterData("products", products);
+    renderProducts();
+}
+
+function deleteProduct(i) {
+    const p = products[i];
+    if(!p || !confirm(`Hapus produk "${p.name}"?`)) return;
+    products.splice(i,1);
+    saveMasterData("products", products);
+    renderProducts();
+}
 
 /* =====================================================
    CUSTOMERS
 ===================================================== */
 
-let customers = [
-
-    {
-        name:"Andi Saputra",
-        phone:"08123456789",
-        email:"andi@email.com",
-        debt:1500000
-    },
-
-    {
-        name:"Budi Santoso",
-        phone:"082233445566",
-        email:"budi@email.com",
-        debt:0
-    }
-
-];
-
+let customers = [];
 
 function renderCustomers() {
-
-    document
-        .getElementById("customerTable")
-        .innerHTML =
-
-        customers.map(c => `
-
-            <tr>
-
-                <td>
-                    <b>
-                        ${c.name}
-                    </b>
-                </td>
-
-                <td>
-                    ${c.phone}
-                </td>
-
-                <td>
-                    ${c.email}
-                </td>
-
-                <td>
-                    ${formatRupiah(c.debt)}
-                </td>
-
-            </tr>
-
-        `).join("");
-
+    const table = document.getElementById("customerTable");
+    if(!customers.length) {
+        table.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">👥</div>Belum ada pelanggan.</div></td></tr>`;
+        return;
+    }
+    table.innerHTML = customers.map((c,i) => `
+        <tr>
+            <td><b>${c.name}</b></td>
+            <td>${c.phone}</td>
+            <td>${c.email}</td>
+            <td>${formatRupiah(c.debt)}</td>
+            <td class="data-actions">
+                <button class="mini-btn edit" onclick="editCustomer(${i})">✏️</button>
+                <button class="mini-btn delete" onclick="deleteCustomer(${i})">🗑️</button>
+            </td>
+        </tr>`).join("");
 }
-
 
 function addCustomer() {
-
-    const name =
-        prompt("Nama pelanggan:");
-
-    if(!name)
-        return;
-
-
-    const phone =
-        prompt("Nomor telepon:") || "-";
-
-
-    const email =
-        prompt("Email:") || "-";
-
-
-    customers.push({
-
-        name,
-        phone,
-        email,
-        debt:0
-
-    });
-
-
+    const name = prompt("Nama pelanggan:");
+    if(!name || !name.trim()) return;
+    const phone = prompt("Nomor telepon:") || "-";
+    const email = prompt("Email:") || "-";
+    const debt = Number(prompt("Piutang awal:", "0") || 0);
+    if(debt < 0 || !Number.isFinite(debt)) return alert("Nilai piutang tidak valid.");
+    customers.push({name:name.trim(),phone,email,debt});
+    saveMasterData("customers", customers);
     renderCustomers();
-
 }
 
+function editCustomer(i) {
+    const c = customers[i];
+    if(!c) return;
+    const name = prompt("Nama pelanggan:", c.name);
+    if(!name || !name.trim()) return;
+    const phone = prompt("Nomor telepon:", c.phone) || "-";
+    const email = prompt("Email:", c.email) || "-";
+    const debt = Number(prompt("Piutang:", c.debt) || 0);
+    if(debt < 0 || !Number.isFinite(debt)) return alert("Nilai piutang tidak valid.");
+    customers[i] = {...c,name:name.trim(),phone,email,debt};
+    saveMasterData("customers", customers);
+    renderCustomers();
+}
+
+function deleteCustomer(i) {
+    const c = customers[i];
+    if(!c || !confirm(`Hapus pelanggan "${c.name}"?`)) return;
+    customers.splice(i,1);
+    saveMasterData("customers", customers);
+    renderCustomers();
+}
 
 /* =====================================================
    SUPPLIERS
 ===================================================== */
 
-let suppliers = [
-
-    {
-        name:"PT Sumber Makmur",
-        phone:"081111222333",
-        email:"supplier@email.com",
-        debt:2500000
-    },
-
-    {
-        name:"CV Maju Jaya",
-        phone:"082211223344",
-        email:"maju@email.com",
-        debt:1000000
-    }
-
-];
-
+let suppliers = [];
 
 function renderSuppliers() {
-
-    document
-        .getElementById("supplierTable")
-        .innerHTML =
-
-        suppliers.map(s => `
-
-            <tr>
-
-                <td>
-                    <b>
-                        ${s.name}
-                    </b>
-                </td>
-
-                <td>
-                    ${s.phone}
-                </td>
-
-                <td>
-                    ${s.email}
-                </td>
-
-                <td>
-                    ${formatRupiah(s.debt)}
-                </td>
-
-            </tr>
-
-        `).join("");
-
+    const table = document.getElementById("supplierTable");
+    if(!suppliers.length) {
+        table.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">🏢</div>Belum ada pemasok.</div></td></tr>`;
+        return;
+    }
+    table.innerHTML = suppliers.map((s,i) => `
+        <tr>
+            <td><b>${s.name}</b></td>
+            <td>${s.phone}</td>
+            <td>${s.email}</td>
+            <td>${formatRupiah(s.debt)}</td>
+            <td class="data-actions">
+                <button class="mini-btn edit" onclick="editSupplier(${i})">✏️</button>
+                <button class="mini-btn delete" onclick="deleteSupplier(${i})">🗑️</button>
+            </td>
+        </tr>`).join("");
 }
-
 
 function addSupplier() {
-
-    const name =
-        prompt("Nama pemasok:");
-
-    if(!name)
-        return;
-
-
-    const phone =
-        prompt("Nomor telepon:") || "-";
-
-
-    const email =
-        prompt("Email:") || "-";
-
-
-    suppliers.push({
-
-        name,
-        phone,
-        email,
-        debt:0
-
-    });
-
-
+    const name = prompt("Nama pemasok:");
+    if(!name || !name.trim()) return;
+    const phone = prompt("Nomor telepon:") || "-";
+    const email = prompt("Email:") || "-";
+    const debt = Number(prompt("Utang awal:", "0") || 0);
+    if(debt < 0 || !Number.isFinite(debt)) return alert("Nilai utang tidak valid.");
+    suppliers.push({name:name.trim(),phone,email,debt});
+    saveMasterData("suppliers", suppliers);
     renderSuppliers();
-
 }
 
+function editSupplier(i) {
+    const s = suppliers[i];
+    if(!s) return;
+    const name = prompt("Nama pemasok:", s.name);
+    if(!name || !name.trim()) return;
+    const phone = prompt("Nomor telepon:", s.phone) || "-";
+    const email = prompt("Email:", s.email) || "-";
+    const debt = Number(prompt("Utang:", s.debt) || 0);
+    if(debt < 0 || !Number.isFinite(debt)) return alert("Nilai utang tidak valid.");
+    suppliers[i] = {...s,name:name.trim(),phone,email,debt};
+    saveMasterData("suppliers", suppliers);
+    renderSuppliers();
+}
+
+function deleteSupplier(i) {
+    const s = suppliers[i];
+    if(!s || !confirm(`Hapus pemasok "${s.name}"?`)) return;
+    suppliers.splice(i,1);
+    saveMasterData("suppliers", suppliers);
+    renderSuppliers();
+}
 
 /* =====================================================
    HPP
@@ -4405,13 +5058,6 @@ themeBtn.addEventListener(
                 .contains("dark");
 
 
-        localStorage.setItem(
-            "glassTheme",
-            dark
-            ? "dark"
-            : "light"
-        );
-
 
         themeBtn.textContent =
             dark
@@ -4425,20 +5071,9 @@ themeBtn.addEventListener(
 );
 
 
-if(
-    localStorage.getItem(
-        "glassTheme"
-    ) === "dark"
-) {
+/* Tema tidak disimpan di browser. Saat halaman dimuat, tema kembali ke mode terang. */
 
-    document.body
-        .classList
-        .add("dark");
 
-    themeBtn.textContent =
-        "☀️";
-
-}
 
 
 /* =====================================================
@@ -4518,34 +5153,40 @@ function refreshEverything() {
 ===================================================== */
 
 function init() {
-
     initializePeriod();
-
+    showAuth();
     updateDashboard();
-
     renderTransactions();
-
     renderJournal();
-
     renderLedger();
-
     renderIncome();
-
     renderBalance();
-
     renderCash();
-
     renderProducts();
-
     renderCustomers();
-
     renderSuppliers();
-
 }
 
 
 init();
 
+</script>
+
+
+<script id="auth-tab-animation-hook">
+document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("click", (e) => {
+    const tab = e.target.closest("#authScreen button");
+    if (!tab) return;
+    const label = (tab.textContent || "").trim().toLowerCase();
+    if (!/login|register|daftar|masuk/.test(label)) return;
+    const form = document.querySelector("#authForm") || document.querySelector(".auth-form");
+    if (!form) return;
+    form.classList.remove("auth-switching");
+    void form.offsetWidth;
+    form.classList.add("auth-switching");
+  });
+});
 </script>
 
 </body>
