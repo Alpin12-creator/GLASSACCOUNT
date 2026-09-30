@@ -1,345 +1,4552 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NUMAL DAS · PORTFOLIO</title>
-<link rel="stylesheet" href="css/style.css">
+
+<title>GlassAccount — Sistem Akuntansi</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+    --bg:#eef2ff;
+    --glass:rgba(255,255,255,.48);
+    --text:#172033;
+    --muted:#64748b;
+    --primary:#6366f1;
+    --secondary:#8b5cf6;
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+    --border:rgba(255,255,255,.6);
+    --shadow:0 20px 50px rgba(31,38,135,.12);
+}
+
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Inter,Arial,sans-serif;
+}
+
+body {
+    min-height:100vh;
+    color:var(--text);
+    background:
+        radial-gradient(circle at 10% 10%,#c7d2fe 0,transparent 30%),
+        radial-gradient(circle at 90% 20%,#ddd6fe 0,transparent 30%),
+        radial-gradient(circle at 50% 90%,#bfdbfe 0,transparent 35%),
+        var(--bg);
+    overflow-x:hidden;
+}
+
+body.dark {
+    --bg:#0f172a;
+    --glass:rgba(30,41,59,.58);
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:rgba(255,255,255,.08);
+    --shadow:0 20px 50px rgba(0,0,0,.3);
+}
+
+button,
+input,
+select {
+    font:inherit;
+}
+
+button {
+    cursor:pointer;
+    border:none;
+}
+
+.app {
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+    width:250px;
+    padding:22px 16px;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:100;
+    background:var(--glass);
+    backdrop-filter:blur(25px);
+    -webkit-backdrop-filter:blur(25px);
+    border-right:1px solid var(--border);
+    box-shadow:var(--shadow);
+    overflow-y:auto;
+}
+
+.logo {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:8px 12px 25px;
+}
+
+.logo-icon {
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    color:white;
+    font-size:20px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    box-shadow:0 10px 25px rgba(99,102,241,.35);
+}
+
+.logo h2 {
+    font-size:19px;
+}
+
+.logo span {
+    font-size:11px;
+    color:var(--muted);
+}
+
+.nav-title {
+    font-size:10px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:18px 12px 8px;
+    letter-spacing:1px;
+}
+
+.nav-item {
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:12px 14px;
+    margin:4px 0;
+    border-radius:13px;
+    color:var(--muted);
+    background:transparent;
+    transition:.25s;
+    text-align:left;
+}
+
+.nav-item:hover {
+    color:var(--text);
+    background:rgba(255,255,255,.25);
+    transform:translateX(3px);
+}
+
+.nav-item.active {
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    box-shadow:0 10px 25px rgba(99,102,241,.25);
+}
+
+.nav-icon {
+    width:20px;
+    text-align:center;
+}
+
+/* MAIN */
+
+.main {
+    margin-left:250px;
+    width:calc(100% - 250px);
+    padding:25px;
+}
+
+.topbar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.page-title h1 {
+    font-size:28px;
+    margin-bottom:4px;
+}
+
+.page-title p {
+    color:var(--muted);
+    font-size:13px;
+}
+
+.top-actions {
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.icon-btn {
+    width:43px;
+    height:43px;
+    border-radius:13px;
+    color:var(--text);
+    background:var(--glass);
+    border:1px solid var(--border);
+    backdrop-filter:blur(20px);
+}
+
+.profile {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:5px 12px 5px 5px;
+    border-radius:30px;
+    background:var(--glass);
+    border:1px solid var(--border);
+}
+
+.avatar {
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    color:white;
+    font-weight:bold;
+    background:linear-gradient(135deg,#06b6d4,#6366f1);
+}
+
+.profile small {
+    color:var(--muted);
+}
+
+/* PERIOD BAR */
+
+.period-bar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 17px;
+    margin-bottom:20px;
+    border-radius:18px;
+    background:var(--glass);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(25px);
+}
+
+.period-info {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.period-icon {
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+}
+
+.period-text small {
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+.period-text strong {
+    font-size:15px;
+}
+
+.period-controls {
+    display:flex;
+    gap:7px;
+    align-items:center;
+}
+
+.period-controls select {
+    min-width:125px;
+}
+
+.period-btn {
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:rgba(255,255,255,.25);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+.period-btn:hover {
+    background:rgba(99,102,241,.15);
+}
+
+.all-period-btn {
+    padding:10px 13px;
+    border-radius:10px;
+    background:rgba(255,255,255,.25);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+.all-period-btn.active {
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+}
+
+/* GLASS */
+
+.glass {
+    background:var(--glass);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(25px);
+    -webkit-backdrop-filter:blur(25px);
+    border-radius:22px;
+}
+
+/* PAGE */
+
+.page {
+    display:none;
+}
+
+.page.active {
+    display:block;
+    animation:fade .25s ease;
+}
+
+@keyframes fade {
+    from {
+        opacity:0;
+        transform:translateY(7px);
+    }
+    to {
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* STATS */
+
+.stats {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.stat-card {
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+}
+
+.stat-card::after {
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    right:-35px;
+    top:-35px;
+    background:rgba(99,102,241,.12);
+}
+
+.stat-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.stat-icon {
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    color:white;
+}
+
+.blue {
+    background:linear-gradient(135deg,#3b82f6,#6366f1);
+}
+
+.green {
+    background:linear-gradient(135deg,#10b981,#14b8a6);
+}
+
+.red {
+    background:linear-gradient(135deg,#ef4444,#f43f5e);
+}
+
+.orange {
+    background:linear-gradient(135deg,#f59e0b,#f97316);
+}
+
+.stat-label {
+    color:var(--muted);
+    font-size:12px;
+}
+
+.stat-value {
+    font-size:23px;
+    font-weight:800;
+}
+
+.change {
+    font-size:11px;
+    margin-top:7px;
+}
+
+.up {
+    color:var(--success);
+}
+
+.down {
+    color:var(--danger);
+}
+
+/* GRID */
+
+.dashboard-grid {
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:18px;
+    margin-bottom:20px;
+}
+
+.card {
+    padding:20px;
+}
+
+.card-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.card-header h3 {
+    font-size:16px;
+}
+
+.card-header span {
+    color:var(--muted);
+    font-size:12px;
+}
+
+.chart-box {
+    height:310px;
+}
+
+/* TABLE */
+
+.table-card {
+    padding:20px;
+}
+
+.table-tools {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+input,
+select {
+    border:1px solid var(--border);
+    outline:none;
+    color:var(--text);
+    background:rgba(255,255,255,.28);
+    padding:11px 13px;
+    border-radius:12px;
+}
+
+body.dark input,
+body.dark select {
+    background:rgba(15,23,42,.55);
+}
+
+input:focus,
+select:focus {
+    border-color:var(--primary);
+}
+
+.search {
+    flex:1;
+    min-width:180px;
+}
+
+.btn {
+    padding:11px 16px;
+    border-radius:12px;
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    box-shadow:0 8px 20px rgba(99,102,241,.22);
+    transition:.2s;
+}
+
+.btn:hover {
+    transform:translateY(-2px);
+}
+
+.btn.secondary {
+    color:var(--text);
+    background:rgba(255,255,255,.3);
+    box-shadow:none;
+    border:1px solid var(--border);
+}
+
+.table-wrap {
+    overflow-x:auto;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    min-width:700px;
+}
+
+th {
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    text-align:left;
+    padding:13px;
+    border-bottom:1px solid var(--border);
+}
+
+td {
+    padding:14px 13px;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+}
+
+tr:hover td {
+    background:rgba(255,255,255,.08);
+}
+
+.badge {
+    display:inline-flex;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:700;
+}
+
+.badge.in {
+    color:#047857;
+    background:rgba(16,185,129,.15);
+}
+
+.badge.out {
+    color:#b91c1c;
+    background:rgba(239,68,68,.15);
+}
+
+.action-btn {
+    padding:7px 9px;
+    border-radius:8px;
+    background:rgba(255,255,255,.2);
+    color:var(--text);
+}
+
+/* MODAL */
+
+.modal {
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:999;
+    background:rgba(15,23,42,.45);
+    backdrop-filter:blur(8px);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.show {
+    display:flex;
+}
+
+.modal-box {
+    width:min(550px,100%);
+    max-height:90vh;
+    overflow-y:auto;
+    padding:25px;
+}
+
+.modal-header {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.close {
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    background:rgba(255,255,255,.2);
+    color:var(--text);
+}
+
+.form-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+.form-group {
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group.full {
+    grid-column:1/-1;
+}
+
+.form-group label {
+    font-size:12px;
+    color:var(--muted);
+}
+
+.form-group input,
+.form-group select {
+    width:100%;
+}
+
+.modal-footer {
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+/* REPORT */
+
+.report-box {
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.report-title {
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.report-title h2 {
+    margin-bottom:5px;
+}
+
+.report-title p {
+    color:var(--muted);
+    font-size:12px;
+}
+
+.report-row {
+    display:flex;
+    justify-content:space-between;
+    padding:12px 5px;
+    border-bottom:1px dashed var(--border);
+}
+
+.report-row.total {
+    font-weight:800;
+    font-size:16px;
+    border-bottom:2px solid var(--text);
+    margin-top:10px;
+}
+
+/* EMPTY */
+
+.empty {
+    text-align:center;
+    padding:35px 10px;
+    color:var(--muted);
+}
+
+.empty-icon {
+    font-size:35px;
+    margin-bottom:8px;
+}
+
+/* MOBILE */
+
+.mobile-menu {
+    display:none;
+}
+
+@media(max-width:1000px) {
+
+    .stats {
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns:1fr;
+    }
+
+    .sidebar {
+        transform:translateX(-100%);
+        transition:.3s;
+    }
+
+    .sidebar.open {
+        transform:translateX(0);
+    }
+
+    .main {
+        margin-left:0;
+        width:100%;
+    }
+
+    .mobile-menu {
+        display:grid;
+        place-items:center;
+    }
+}
+
+@media(max-width:700px) {
+
+    .period-bar {
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .period-controls {
+        width:100%;
+        flex-wrap:wrap;
+    }
+
+    .period-controls select {
+        flex:1;
+    }
+
+}
+
+@media(max-width:650px) {
+
+    .main {
+        padding:15px;
+    }
+
+    .stats {
+        grid-template-columns:1fr;
+    }
+
+    .form-grid {
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full {
+        grid-column:auto;
+    }
+
+    .topbar {
+        align-items:flex-start;
+    }
+
+    .profile {
+        display:none;
+    }
+}
+</style>
 </head>
-<body data-screen="home">
 
-<!-- Background art layers -->
-<div id="bg" aria-hidden="true">
-  <div class="bg-layer" id="bg-stripes"></div>
-  <svg class="bg-star" style="left:6%;top:8%;width:26vmax;height:26vmax" viewBox="0 0 100 100">
-    <polygon points="50,0 60,35 98,35 68,57 78,94 50,72 22,94 32,57 2,35 40,35" fill="#000"/>
-  </svg>
-  <svg class="bg-star s2" style="right:4%;bottom:6%;width:34vmax;height:34vmax" viewBox="0 0 100 100">
-    <polygon points="50,0 60,35 98,35 68,57 78,94 50,72 22,94 32,57 2,35 40,35" fill="#fff"/>
-  </svg>
-  <!-- Per-screen menu artwork: assets/menus/<screen>.jpg
-       Each falls back to the CSS stripes if its file is missing -->
-  <img class="menu-art" id="art-home" src="assets/menus/home.jpg" alt=""
-       onload="document.body.classList.add('has-art-home')" onerror="this.remove()">
-  <img class="menu-art" id="art-projects" src="assets/menus/projects.jpg" alt=""
-       onload="document.body.classList.add('has-art-projects')" onerror="this.remove()">
- <video class="menu-art" id="art-skills"
-       autoplay muted loop playsinline
-       onloadeddata="document.body.classList.add('has-art-skills')">
-  <source src="assets/video/skills.mp4" type="video/mp4">
-</video>
-  <img class="menu-art" id="art-about" src="assets/menus/about.jpg" alt=""
-       onload="document.body.classList.add('has-art-about')" onerror="this.remove()">
-  <img class="menu-art" id="art-contact" src="assets/menus/contact.jpg" alt=""
-       onload="document.body.classList.add('has-art-contact')" onerror="this.remove()">
-  <div class="bg-layer" id="bg-halftone"></div>
-  <div class="bg-layer" id="bg-vignette"></div>
-</div>
-<div id="slash" aria-hidden="true"></div>
+<body>
 
-<!-- Hero art: drop your file at assets/hero.png (transparent PNG looks best) -->
-<img id="hero-art" src="assets/hero.png" alt="" onerror="this.remove()">
+<div class="app">
 
-<!-- Screen transition wipe -->
-<div id="wipe" aria-hidden="true">
-  <div class="pane p3"></div>
-  <div class="pane p2"></div>
-  <div class="pane p1"></div>
-  <div class="flash"></div>
-</div>
+<!-- ================= SIDEBAR ================= -->
 
-<!-- Custom animated cursor + select sound -->
-<div id="cursor" aria-hidden="true"></div>
-<audio id="sfx-select" src="assets/sfx/select.mp3" preload="auto"></audio>
-<button id="audio-toggle" aria-label="Turn audio on">🔇</button>
+<aside class="sidebar" id="sidebar">
 
-<video id="home-video" autoplay muted loop playsinline>
-  <source src="assets/video/home-background.mp4" type="video/mp4">
-</video>
+    <div class="logo">
+
+        <div class="logo-icon">₿</div>
+
+        <div>
+            <h2>GlassAccount</h2>
+            <span>Accounting System</span>
+        </div>
+
+    </div>
+
+    <div class="nav-title">Menu Utama</div>
+
+    <button class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">⌂</span>
+        Dashboard
+    </button>
+
+    <button class="nav-item" data-page="transactions">
+        <span class="nav-icon">↔</span>
+        Transaksi
+    </button>
+
+    <button class="nav-item" data-page="journal">
+        <span class="nav-icon">▤</span>
+        Jurnal Umum
+    </button>
+
+    <button class="nav-item" data-page="ledger">
+        <span class="nav-icon">▥</span>
+        Buku Besar
+    </button>
+
+    <div class="nav-title">Laporan</div>
+
+    <button class="nav-item" data-page="income">
+        <span class="nav-icon">📈</span>
+        Laba Rugi
+    </button>
+
+    <button class="nav-item" data-page="balance">
+        <span class="nav-icon">⚖</span>
+        Neraca
+    </button>
+
+    <button class="nav-item" data-page="cash">
+        <span class="nav-icon">💰</span>
+        Kas & Bank
+    </button>
+
+    <div class="nav-title">Data</div>
+
+    <button class="nav-item" data-page="products">
+        <span class="nav-icon">📦</span>
+        Produk
+    </button>
+
+    <button class="nav-item" data-page="customers">
+        <span class="nav-icon">👥</span>
+        Pelanggan
+    </button>
+
+    <button class="nav-item" data-page="suppliers">
+        <span class="nav-icon">🏢</span>
+        Pemasok
+    </button>
+
+    <div class="nav-title">Tools</div>
+
+    <button class="nav-item" data-page="calculator">
+        <span class="nav-icon">🧮</span>
+        HPP & BEP
+    </button>
+
+</aside>
 
 
-<div id="shell">
-  <div id="hud-top">
-    <div class="hud-tag">Portfolio // NUMAL DAS</div>
-    <div class="hud-tag alt">ASSAM · ELECTRONICS AND COMMUNICATION</div>
-  </div>
+<!-- ================= MAIN ================= -->
 
-  <div id="stage">
+<main class="main">
 
-    <!-- HOME -->
-    <section class="screen active" id="screen-home" aria-label="Main menu">
-      <div id="intro-eyebrow">Take a look at my work</div>
-      <h1 id="big-name">
-        <span class="ransom" data-ransom="NUMAL"></span>
-        <span class="ransom" data-ransom="DAS"></span>
-      </h1>
-      <p id="tagline">
-       <p id="tagline">
-  4th-year Electronics and Communication Engineering student with a strong
-  interest in programming, electronics, embedded systems, and hardware
-  exploration. I enjoy building practical projects that combine hardware
-  and software, working with Raspberry Pi, Python, circuit simulation,
-  digital electronics, and signal visualization. I am passionate about
-  learning by experimenting, solving technical problems, and turning ideas
-  into working projects.
-</p>
-      </p>
-      <nav id="menu" aria-label="Sections">
-        <button class="menu-item sel" data-target="projects">
-          <span class="ransom" data-ransom="PROJECTS"></span><span class="cursor-mark">◀</span>
-        </button>
-        <button class="menu-item" data-target="skills">
-          <span class="ransom" data-ransom="SKILLS"></span><span class="cursor-mark">◀</span>
-        </button>
-        <button class="menu-item" data-target="about">
-          <span class="ransom" data-ransom="ABOUT"></span><span class="cursor-mark">◀</span>
-        </button>
-        <button class="menu-item" data-target="contact">
-          <span class="ransom" data-ransom="CONTACT"></span><span class="cursor-mark">◀</span>
-        </button>
-      </nav>
-    </section>
+    <!-- TOPBAR -->
 
-    <!-- PROJECTS -->
-    <section class="screen sub" id="screen-projects" aria-label="Projects">
-      <div class="screen-head"><span class="ransom" data-ransom="PROJECTS"></span></div>
-      <button class="back-hint" data-back>ESC · Back</button>
-      <div class="grid-label"><span class="bar"></span>Featured</div>
-      <div id="feat-grid" class="grid"></div>
-      <div class="grid-label"><span class="bar"></span>All repositories</div>
-      <div id="repo-status">Contacting GitHub…</div>
-      <div id="repo-grid" class="grid"></div>
-    </section>
+    <div class="topbar">
 
-    <!-- SKILLS -->
-    <section class="screen sub" id="screen-skills" aria-label="Skills">
-      <div class="screen-head"><span class="ransom" data-ransom="SKILLS"></span></div>
-      <button class="back-hint" data-back>ESC · Back</button>
-      <div id="skills-body"></div>
-    </section>
+        <div style="display:flex;align-items:center;gap:12px;">
 
-    <!-- ABOUT -->
-<section class="screen sub align-right" id="screen-about" aria-label="About">
+            <button class="icon-btn mobile-menu" id="menuBtn">
+                ☰
+            </button>
 
-  <div class="screen-head">
-    <span class="ransom" data-ransom="ABOUT"></span>
-  </div>
+            <div class="page-title">
 
-  <button class="back-hint" data-back>ESC · Back</button>
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
 
-  <div class="paper">
+                <p id="pageSubtitle">
+                    Pantau kondisi keuangan bisnis lo.
+                </p>
 
-    <!-- Profile photo -->
-    <figure class="about-photo">
-      <img src="assets/me.jpg" alt="Numal Das">
-      <figcaption>NUMAL · ASSAM</figcaption>
-    </figure>
+            </div>
 
-    <!-- INTRODUCTION -->
-    <p class="quote">
-      I am a motivated
-      <strong class="about-highlight">4th-year Electronics & Communication Engineering student</strong>
-      with a strong interest in
-      <strong class="about-highlight">programming, electronics, hardware exploration,</strong>
-      and problem-solving.
-    </p>
+        </div>
 
-    <br>
 
-    <!-- PROFILE -->
-    <p>
-      I enjoy understanding how things work from both the
-      <strong class="about-highlight">hardware and software</strong>
-      side. My goal is not simply to learn technologies, but to
-      experiment with them, build practical projects, make mistakes,
-      understand why they happen, and improve the solution.
-    </p>
+        <div class="top-actions">
 
-    <br>
+            <button class="icon-btn" id="themeBtn">
+                🌙
+            </button>
 
-    <!-- TECHNICAL INTEREST -->
-    <p>
-      My current technical interests include
-      <strong class="about-highlight">embedded systems, digital logic,
-      circuit simulation, Python, signal visualization, electronics,
-      and VLSI.</strong>
-      I particularly enjoy projects where programming interacts directly
-      with physical hardware.
-    </p>
+            <button class="icon-btn" id="notifyBtn">
+                🔔
+            </button>
 
-    <br>
+            <div class="profile">
 
-    <!-- PROJECTS -->
-    <p>
-      One of my main projects is a
-      <strong class="about-highlight">Raspberry Pi 5 based oscilloscope</strong>
-      using an ADS1115 16-bit ADC. I worked with I²C communication,
-      voltage acquisition, channel selection, and real-time waveform
-      visualization using Python and Matplotlib.
-    </p>
+                <div class="avatar">
+                    AR
+                </div>
 
-    <br>
+                <div>
+                    <b>Admin</b>
+                    <br>
+                    <small>Administrator</small>
+                </div>
 
-    <p>
-      I have also worked on
-      <strong class="about-highlight">CMOS inverter analysis using LTspice</strong>,
-      where I studied the voltage transfer characteristic, switching
-      behaviour, VOH, VOL, VIH, VIL, and noise margins. I experimented
-      with PMOS and NMOS sizing to understand how transistor dimensions
-      affect inverter behaviour.
-    </p>
+            </div>
 
-    <br>
+        </div>
 
-    <p>
-      In digital design, I implemented
-      <strong class="about-highlight">Mealy and Moore finite-state
-      machines</strong>
-      for binary sequence detection using Verilog. I created testbenches
-      and used GTKWave to verify state transitions and outputs.
-    </p>
+    </div>
 
-    <br>
 
-    <p>
-      I have also explored
-      <strong class="about-highlight">Python image processing</strong>
-      using OpenCV and Matplotlib, including image loading, RGB/BGR
-      conversion, displaying images, rotation, translation, and scaling.
-    </p>
+    <!-- ================= GLOBAL PERIOD ================= -->
 
-    <br>
+    <div class="period-bar">
 
-    <!-- TOOLS -->
-    <p>
-      Some of the tools and technologies I have worked with include
-      <strong class="about-highlight">Python, C/C++, Verilog, 8051 Assembly,
-      LTspice, GTKWave, Keil uVision 5, Magic, VS Code, OpenCV,
-      NumPy, Matplotlib, Jupyter Notebook, Raspberry Pi 5,
-      and ADS1115.</strong>
-    </p>
+        <div class="period-info">
 
-    <br>
+            <div class="period-icon">
+                📅
+            </div>
 
-    <!-- PERSONALITY -->
-    <p>
-      I consider
-      <strong class="about-highlight">problem-solving and persistence</strong>
-      to be two of my strongest qualities. I like challenging technical
-      problems because they force me to think differently and keep
-      experimenting until I understand the solution.
-    </p>
+            <div class="period-text">
 
-    <br>
+                <small>Periode Aktif</small>
 
-    <p>
-      I also value
-      <strong class="about-highlight">curiosity, independent learning,
-      hands-on experimentation, teamwork, adaptability,</strong>
-      and helping others whenever I can.
-    </p>
+                <strong id="periodLabel">
+                    September 2026
+                </strong>
 
-    <br>
+            </div>
 
-    <!-- OUTSIDE ACADEMICS -->
-    <p>
-      Outside academics, I have a wide range of interests. I enjoy
-      <strong class="about-highlight">programming and hardware exploration,</strong>
-      but I also like gaming, especially challenging Souls-like and
-      story-driven games. I enjoy going to the gym, swimming, cycling,
-      running, and cooking.
-    </p>
+        </div>
 
-    <br>
 
-    <!-- PERSONAL QUOTE -->
-    <p class="about-quote">
-      <strong>
-        “The important thing is not to stop questioning.”
-      </strong>
-      <br>
-      — Albert Einstein
-    </p>
+        <div class="period-controls">
 
-    <br>
+            <button
+                class="period-btn"
+                id="prevMonth"
+                title="Bulan sebelumnya">
+                ←
+            </button>
 
-    <!-- CURRENT GOAL -->
-    <p>
-      Right now, I am focused on strengthening my fundamentals in
-      <strong class="about-highlight">electronics, programming,
-      embedded systems, digital systems, and practical engineering.</strong>
-      I want to keep turning what I learn in class into projects that
-      I can actually build, test, and improve.
-    </p>
+            <select id="monthSelect"></select>
 
-  </div>
+            <select id="yearSelect"></select>
 
-  <!-- CV BUTTON -->
-  <a class="cv-btn"
-     href="assets/resume/Numal_Das_Resume.pdf"
-     download="Numal_Das_Resume.pdf">
-    <span>⬇ Download my CV (PDF)</span>
-  </a>
+            <button
+                class="period-btn"
+                id="nextMonth"
+                title="Bulan berikutnya">
+                →
+            </button>
+
+            <button
+                class="all-period-btn"
+                id="allPeriodBtn">
+                Semua Periode
+            </button>
+
+        </div>
+
+    </div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section class="page active" id="dashboard">
+
+    <div class="stats">
+
+        <div class="stat-card glass">
+
+            <div class="stat-top">
+
+                <div>
+
+                    <div class="stat-label">
+                        Total Saldo
+                    </div>
+
+                    <div class="stat-value" id="totalBalance">
+                        Rp 0
+                    </div>
+
+                </div>
+
+                <div class="stat-icon blue">
+                    💰
+                </div>
+
+            </div>
+
+            <div class="change up">
+                Saldo periode aktif
+            </div>
+
+        </div>
+
+
+        <div class="stat-card glass">
+
+            <div class="stat-top">
+
+                <div>
+
+                    <div class="stat-label">
+                        Pemasukan
+                    </div>
+
+                    <div class="stat-value" id="totalIncome">
+                        Rp 0
+                    </div>
+
+                </div>
+
+                <div class="stat-icon green">
+                    ↗
+                </div>
+
+            </div>
+
+            <div class="change up">
+                Pendapatan periode
+            </div>
+
+        </div>
+
+
+        <div class="stat-card glass">
+
+            <div class="stat-top">
+
+                <div>
+
+                    <div class="stat-label">
+                        Pengeluaran
+                    </div>
+
+                    <div class="stat-value" id="totalExpense">
+                        Rp 0
+                    </div>
+
+                </div>
+
+                <div class="stat-icon red">
+                    ↘
+                </div>
+
+            </div>
+
+            <div class="change down">
+                Beban periode
+            </div>
+
+        </div>
+
+
+        <div class="stat-card glass">
+
+            <div class="stat-top">
+
+                <div>
+
+                    <div class="stat-label">
+                        Laba Bersih
+                    </div>
+
+                    <div class="stat-value" id="netProfit">
+                        Rp 0
+                    </div>
+
+                </div>
+
+                <div class="stat-icon orange">
+                    ★
+                </div>
+
+            </div>
+
+            <div class="change up">
+                Periode aktif
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-grid">
+
+        <div class="card glass">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>
+                        Arus Keuangan
+                    </h3>
+
+                    <span id="chartPeriodLabel">
+                        Periode aktif
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="chart-box">
+
+                <canvas id="financeChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <div class="card glass">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>
+                        Komposisi
+                    </h3>
+
+                    <span>
+                        Pemasukan vs pengeluaran
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div style="height:250px">
+
+                <canvas id="pieChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Transaksi Periode Ini
+                </h3>
+
+                <span id="recentPeriodText">
+                    -
+                </span>
+
+            </div>
+
+            <button
+                class="btn"
+                onclick="openTransactionModal()">
+
+                + Transaksi
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Keterangan</th>
+                        <th>Kategori</th>
+                        <th>Jenis</th>
+                        <th>Nominal</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="recentTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </section>
-    <!-- CONTACT -->
-    <section class="screen sub align-right" id="screen-contact" aria-label="Contact">
-      <div class="screen-head"><span class="ransom" data-ransom="CONTACT"></span></div>
-      <button class="back-hint" data-back>ESC · Back</button>
-      <div class="paper" style="max-width:620px">
-        <p>I'm open to <strong>graduate ML and software engineering roles</strong> and research
-        collaborations in AI. Drop me a message below and it goes straight to my inbox,
-        or find me on any of these:</p>
-      </div>
-      <div class="contact-list">
-        <a class="contact-chip" href="mailto:numaldas500@gmail.com"><span>Email ✉</span></a>
-        
-        <a class="contact-chip" href="https://github.com/Numal400" target="_blank" rel="noopener"><span>GitHub ↗</span></a>
-        
-        <a class="contact-chip" href="https://www.instagram.com/ariel_matic_" target="_blank" rel="noopener"><span>Instagram ↗</span></a>
-        
-       <a class="contact-chip" href="assets/resume/Numal_Das_Resume.pdf" download="Numal_Das_Resume.pdf"><span>CV ⬇</span></a>
-      </div>
 
-      <!-- Message form — relayed to your inbox via formsubmit.co.
-           NOTE: the first-ever submission emails you a one-time activation link. -->
-      <form id="contact-form" class="paper" style="max-width:620px" novalidate>
-        <div class="form-head">Send me a message</div>
-        <label class="field">
-          <span>Name</span>
-          <input type="text" name="name" required maxlength="100" autocomplete="name">
-        </label>
-        <label class="field">
-          <span>Your email</span>
-          <input type="email" name="email" required maxlength="150" autocomplete="email">
-        </label>
-        <label class="field">
-          <span>Message</span>
-          <textarea name="message" required rows="5" maxlength="3000"></textarea>
-        </label>
-        <!-- honeypot: bots fill this, humans never see it -->
-        <input type="text" name="_honey" tabindex="-1" autocomplete="off"
-               style="position:absolute;left:-5000px" aria-hidden="true">
-        <div class="form-foot">
-          <button type="submit" class="cv-btn form-send"><span>Send it ➤</span></button>
-          <div id="form-status" role="status"></div>
+
+<!-- ================= TRANSACTIONS ================= -->
+
+<section class="page" id="transactions">
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Daftar Transaksi
+                </h3>
+
+                <span>
+                    Transaksi berdasarkan periode aktif
+                </span>
+
+            </div>
+
+            <button
+                class="btn"
+                onclick="openTransactionModal()">
+
+                + Tambah Transaksi
+
+            </button>
+
         </div>
-      </form>
-    </section>
 
-  </div>
 
-  <div id="hud-bottom">
-    <span><span class="key">↑↓</span>Select</span>
-    <span><span class="key">Enter</span>Confirm</span>
-    <span><span class="key">Esc</span>Back</span>
-    <span style="margin-left:auto;opacity:.8" id="clock"></span>
-  </div>
+        <div class="table-tools">
+
+            <input
+                class="search"
+                id="transactionSearch"
+                placeholder="🔎 Cari transaksi..."
+            >
+
+            <select id="transactionType">
+
+                <option value="">
+                    Semua Jenis
+                </option>
+
+                <option value="income">
+                    Pemasukan
+                </option>
+
+                <option value="expense">
+                    Pengeluaran
+                </option>
+
+            </select>
+
+            <button
+                class="btn secondary"
+                onclick="exportCSV()">
+
+                📤 Export CSV
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Keterangan</th>
+                        <th>Kategori</th>
+                        <th>Jenis</th>
+                        <th>Nominal</th>
+                        <th>Aksi</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="transactionTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= JOURNAL ================= -->
+
+<section class="page" id="journal">
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Jurnal Umum
+                </h3>
+
+                <span id="journalPeriod">
+                    -
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Akun</th>
+                        <th>Keterangan</th>
+                        <th>Debit</th>
+                        <th>Kredit</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="journalTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= LEDGER ================= -->
+
+<section class="page" id="ledger">
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Buku Besar
+                </h3>
+
+                <span id="ledgerPeriod">
+                    -
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Akun</th>
+                        <th>Total Debit</th>
+                        <th>Total Kredit</th>
+                        <th>Saldo</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="ledgerTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= INCOME ================= -->
+
+<section class="page" id="income">
+
+    <div class="report-box glass">
+
+        <div class="report-title">
+
+            <h2>
+                Laporan Laba Rugi
+            </h2>
+
+            <p id="incomePeriod">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="report-row">
+
+            <span>
+                Pendapatan
+            </span>
+
+            <b id="reportIncome">
+                Rp 0
+            </b>
+
+        </div>
+
+
+        <div class="report-row">
+
+            <span>
+                Harga Pokok Penjualan
+            </span>
+
+            <b id="reportHpp">
+                Rp 0
+            </b>
+
+        </div>
+
+
+        <div class="report-row">
+
+            <span>
+                Laba Kotor
+            </span>
+
+            <b id="grossProfit">
+                Rp 0
+            </b>
+
+        </div>
+
+
+        <div class="report-row">
+
+            <span>
+                Beban Operasional
+            </span>
+
+            <b id="reportExpense">
+                Rp 0
+            </b>
+
+        </div>
+
+
+        <div class="report-row total">
+
+            <span>
+                Laba Bersih
+            </span>
+
+            <b id="reportProfit">
+                Rp 0
+            </b>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= BALANCE ================= -->
+
+<section class="page" id="balance">
+
+    <div class="dashboard-grid">
+
+        <div class="report-box glass">
+
+            <div class="report-title">
+
+                <h2>
+                    Aset
+                </h2>
+
+                <p id="balancePeriod">
+                    -
+                </p>
+
+            </div>
+
+
+            <div class="report-row">
+
+                <span>
+                    Kas
+                </span>
+
+                <b id="balanceCash">
+                    Rp 0
+                </b>
+
+            </div>
+
+
+            <div class="report-row">
+
+                <span>
+                    Piutang
+                </span>
+
+                <b>
+                    Rp 0
+                </b>
+
+            </div>
+
+
+            <div class="report-row">
+
+                <span>
+                    Persediaan
+                </span>
+
+                <b>
+                    Rp 0
+                </b>
+
+            </div>
+
+
+            <div class="report-row total">
+
+                <span>
+                    Total Aset
+                </span>
+
+                <b id="totalAsset">
+                    Rp 0
+                </b>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-box glass">
+
+            <div class="report-title">
+
+                <h2>
+                    Kewajiban & Ekuitas
+                </h2>
+
+            </div>
+
+
+            <div class="report-row">
+
+                <span>
+                    Utang
+                </span>
+
+                <b>
+                    Rp 0
+                </b>
+
+            </div>
+
+
+            <div class="report-row">
+
+                <span>
+                    Modal
+                </span>
+
+                <b id="balanceCapital">
+                    Rp 0
+                </b>
+
+            </div>
+
+
+            <div class="report-row">
+
+                <span>
+                    Laba Ditahan
+                </span>
+
+                <b id="balanceProfit">
+                    Rp 0
+                </b>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CASH ================= -->
+
+<section class="page" id="cash">
+
+    <div class="stats">
+
+        <div class="stat-card glass">
+
+            <div class="stat-label">
+                Kas Masuk
+            </div>
+
+            <div class="stat-value" id="cashIn">
+                Rp 0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card glass">
+
+            <div class="stat-label">
+                Kas Keluar
+            </div>
+
+            <div class="stat-value" id="cashOut">
+                Rp 0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card glass">
+
+            <div class="stat-label">
+                Saldo Kas
+            </div>
+
+            <div class="stat-value" id="cashBalance">
+                Rp 0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card glass">
+
+            <div class="stat-label">
+                Jumlah Transaksi
+            </div>
+
+            <div class="stat-value" id="cashTransactions">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Mutasi Kas
+                </h3>
+
+                <span id="cashPeriod">
+                    -
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Keterangan</th>
+                        <th>Masuk</th>
+                        <th>Keluar</th>
+                        <th>Saldo</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="cashTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PRODUCTS ================= -->
+
+<section class="page" id="products">
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Produk & Persediaan
+                </h3>
+
+                <span>
+                    Data produk
+                </span>
+
+            </div>
+
+            <button
+                class="btn"
+                onclick="addProduct()">
+
+                + Produk
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Kode</th>
+                        <th>Produk</th>
+                        <th>Stok</th>
+                        <th>Harga Beli</th>
+                        <th>Harga Jual</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="productTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CUSTOMERS ================= -->
+
+<section class="page" id="customers">
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Pelanggan
+                </h3>
+
+                <span>
+                    Data customer
+                </span>
+
+            </div>
+
+            <button
+                class="btn"
+                onclick="addCustomer()">
+
+                + Pelanggan
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Nama</th>
+                        <th>Telepon</th>
+                        <th>Email</th>
+                        <th>Piutang</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="customerTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SUPPLIERS ================= -->
+
+<section class="page" id="suppliers">
+
+    <div class="card glass table-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>
+                    Pemasok
+                </h3>
+
+                <span>
+                    Data supplier
+                </span>
+
+            </div>
+
+            <button
+                class="btn"
+                onclick="addSupplier()">
+
+                + Pemasok
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Nama</th>
+                        <th>Telepon</th>
+                        <th>Email</th>
+                        <th>Utang</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="supplierTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CALCULATOR ================= -->
+
+<section class="page" id="calculator">
+
+    <div class="dashboard-grid">
+
+        <div class="card glass">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>
+                        Kalkulator HPP
+                    </h3>
+
+                    <span>
+                        Hitung harga pokok produksi
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Bahan Baku
+                    </label>
+
+                    <input
+                        type="number"
+                        id="rawMaterial"
+                        value="0">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Tenaga Kerja
+                    </label>
+
+                    <input
+                        type="number"
+                        id="labor"
+                        value="0">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Overhead
+                    </label>
+
+                    <input
+                        type="number"
+                        id="overhead"
+                        value="0">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Jumlah Produksi
+                    </label>
+
+                    <input
+                        type="number"
+                        id="production"
+                        value="1">
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="btn"
+                style="margin-top:18px"
+                onclick="calculateHPP()">
+
+                Hitung HPP
+
+            </button>
+
+
+            <div
+                class="glass"
+                style="padding:18px;margin-top:18px">
+
+                <small>
+                    HPP per unit
+                </small>
+
+                <h2 id="hppResult">
+                    Rp 0
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="card glass">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>
+                        Kalkulator BEP
+                    </h3>
+
+                    <span>
+                        Break Even Point
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Biaya Tetap
+                    </label>
+
+                    <input
+                        type="number"
+                        id="fixedCost"
+                        value="0">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Harga Jual / Unit
+                    </label>
+
+                    <input
+                        type="number"
+                        id="sellingPrice"
+                        value="0">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Biaya Variabel / Unit
+                    </label>
+
+                    <input
+                        type="number"
+                        id="variableCost"
+                        value="0">
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="btn"
+                style="margin-top:18px"
+                onclick="calculateBEP()">
+
+                Hitung BEP
+
+            </button>
+
+
+            <div
+                class="glass"
+                style="padding:18px;margin-top:18px">
+
+                <small>
+                    BEP Unit
+                </small>
+
+                <h2 id="bepResult">
+                    0 Unit
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
 </div>
 
-<!-- MVC: model = data, view = DOM, controller = events -->
-<script src="js/model.js" defer></script>
-<script src="js/view.js" defer></script>
-<script src="js/controller.js" defer></script>
+
+<!-- ================= TRANSACTION MODAL ================= -->
+
+<div class="modal" id="transactionModal">
+
+    <div class="modal-box glass">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Tambah Transaksi
+                </h2>
+
+                <small style="color:var(--muted)">
+                    Transaksi akan masuk ke periode yang dipilih.
+                </small>
+
+            </div>
+
+            <button
+                class="close"
+                onclick="closeTransactionModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <form id="transactionForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Tanggal
+                    </label>
+
+                    <input
+                        type="date"
+                        id="transactionDate"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Jenis
+                    </label>
+
+                    <select id="transactionKind">
+
+                        <option value="income">
+                            Pemasukan
+                        </option>
+
+                        <option value="expense">
+                            Pengeluaran
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Keterangan
+                    </label>
+
+                    <input
+                        type="text"
+                        id="transactionDescription"
+                        placeholder="Contoh: Penjualan produk"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Kategori
+                    </label>
+
+                    <select id="transactionCategory">
+
+                        <option>
+                            Penjualan
+                        </option>
+
+                        <option>
+                            Pembelian
+                        </option>
+
+                        <option>
+                            Gaji
+                        </option>
+
+                        <option>
+                            Operasional
+                        </option>
+
+                        <option>
+                            Transportasi
+                        </option>
+
+                        <option>
+                            Promosi
+                        </option>
+
+                        <option>
+                            Sewa
+                        </option>
+
+                        <option>
+                            Lainnya
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Nominal
+                    </label>
+
+                    <input
+                        type="number"
+                        id="transactionAmount"
+                        placeholder="0"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn secondary"
+                    onclick="closeTransactionModal()">
+
+                    Batal
+
+                </button>
+
+                <button
+                    class="btn"
+                    type="submit">
+
+                    Simpan Transaksi
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   DATA
+===================================================== */
+
+const defaultTransactions = [
+
+    {
+        id:1,
+        date:"2026-08-01",
+        description:"Penjualan Produk A",
+        category:"Penjualan",
+        type:"income",
+        amount:8500000
+    },
+
+    {
+        id:2,
+        date:"2026-08-03",
+        description:"Pembayaran supplier",
+        category:"Pembelian",
+        type:"expense",
+        amount:2800000
+    },
+
+    {
+        id:3,
+        date:"2026-09-03",
+        description:"Penjualan Produk B",
+        category:"Penjualan",
+        type:"income",
+        amount:6200000
+    },
+
+    {
+        id:4,
+        date:"2026-09-05",
+        description:"Pembayaran listrik",
+        category:"Operasional",
+        type:"expense",
+        amount:750000
+    },
+
+    {
+        id:5,
+        date:"2026-09-12",
+        description:"Pembayaran gaji",
+        category:"Gaji",
+        type:"expense",
+        amount:3200000
+    },
+
+    {
+        id:6,
+        date:"2026-10-02",
+        description:"Penjualan Produk C",
+        category:"Penjualan",
+        type:"income",
+        amount:9500000
+    }
+
+];
+
+
+let transactions =
+    JSON.parse(localStorage.getItem("glassTransactions"))
+    || defaultTransactions;
+
+
+/* =====================================================
+   PERIOD SYSTEM
+===================================================== */
+
+const monthNames = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember"
+];
+
+
+let currentDate = new Date();
+
+let selectedMonth =
+    currentDate.getMonth();
+
+let selectedYear =
+    currentDate.getFullYear();
+
+let allPeriods = false;
+
+
+/* =====================================================
+   PERIOD SELECT
+===================================================== */
+
+function initializePeriod() {
+
+    const monthSelect =
+        document.getElementById("monthSelect");
+
+    const yearSelect =
+        document.getElementById("yearSelect");
+
+
+    monthSelect.innerHTML =
+        monthNames.map((month,index) => `
+            <option value="${index}">
+                ${month}
+            </option>
+        `).join("");
+
+
+    const years = [];
+
+    for(let year = 2024; year <= 2035; year++) {
+        years.push(year);
+    }
+
+
+    yearSelect.innerHTML =
+        years.map(year => `
+            <option value="${year}">
+                ${year}
+            </option>
+        `).join("");
+
+
+    monthSelect.value =
+        selectedMonth;
+
+    yearSelect.value =
+        selectedYear;
+
+    updatePeriodUI();
+
+}
+
+
+function updatePeriodUI() {
+
+    const label =
+        document.getElementById("periodLabel");
+
+    const allButton =
+        document.getElementById("allPeriodBtn");
+
+
+    if(allPeriods) {
+
+        label.textContent =
+            "Semua Periode";
+
+        allButton.classList.add("active");
+
+    } else {
+
+        label.textContent =
+            `${monthNames[selectedMonth]} ${selectedYear}`;
+
+        allButton.classList.remove("active");
+
+    }
+
+}
+
+
+/* =====================================================
+   CHANGE MONTH
+===================================================== */
+
+document
+.getElementById("monthSelect")
+.addEventListener("change",function() {
+
+    selectedMonth =
+        Number(this.value);
+
+    allPeriods = false;
+
+    updatePeriodUI();
+
+    refreshEverything();
+
+});
+
+
+document
+.getElementById("yearSelect")
+.addEventListener("change",function() {
+
+    selectedYear =
+        Number(this.value);
+
+    allPeriods = false;
+
+    updatePeriodUI();
+
+    refreshEverything();
+
+});
+
+
+document
+.getElementById("prevMonth")
+.addEventListener("click",function() {
+
+    selectedMonth--;
+
+    if(selectedMonth < 0) {
+
+        selectedMonth = 11;
+        selectedYear--;
+
+    }
+
+    allPeriods = false;
+
+    syncPeriodSelect();
+
+    updatePeriodUI();
+
+    refreshEverything();
+
+});
+
+
+document
+.getElementById("nextMonth")
+.addEventListener("click",function() {
+
+    selectedMonth++;
+
+    if(selectedMonth > 11) {
+
+        selectedMonth = 0;
+        selectedYear++;
+
+    }
+
+    allPeriods = false;
+
+    syncPeriodSelect();
+
+    updatePeriodUI();
+
+    refreshEverything();
+
+});
+
+
+document
+.getElementById("allPeriodBtn")
+.addEventListener("click",function() {
+
+    allPeriods = !allPeriods;
+
+    updatePeriodUI();
+
+    refreshEverything();
+
+});
+
+
+function syncPeriodSelect() {
+
+    document.getElementById("monthSelect").value =
+        selectedMonth;
+
+    document.getElementById("yearSelect").value =
+        selectedYear;
+
+}
+
+
+/* =====================================================
+   FILTER DATA BERDASARKAN PERIODE
+===================================================== */
+
+function getPeriodTransactions() {
+
+    if(allPeriods) {
+
+        return [...transactions];
+
+    }
+
+
+    return transactions.filter(t => {
+
+        const date =
+            new Date(t.date + "T00:00:00");
+
+        return (
+            date.getMonth() === selectedMonth &&
+            date.getFullYear() === selectedYear
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   PERIOD LABEL
+===================================================== */
+
+function getPeriodText() {
+
+    if(allPeriods) {
+        return "Semua periode";
+    }
+
+    return `${monthNames[selectedMonth]} ${selectedYear}`;
+
+}
+
+
+/* =====================================================
+   UTIL
+===================================================== */
+
+function formatRupiah(number) {
+
+    return new Intl.NumberFormat("id-ID",{
+
+        style:"currency",
+
+        currency:"IDR",
+
+        maximumFractionDigits:0
+
+    }).format(number);
+
+}
+
+
+function saveData() {
+
+    localStorage.setItem(
+        "glassTransactions",
+        JSON.stringify(transactions)
+    );
+
+}
+
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+const navItems =
+    document.querySelectorAll(".nav-item");
+
+const pages =
+    document.querySelectorAll(".page");
+
+
+const titles = {
+
+    dashboard:[
+        "Dashboard",
+        "Pantau kondisi keuangan bisnis lo."
+    ],
+
+    transactions:[
+        "Transaksi",
+        "Kelola pemasukan dan pengeluaran."
+    ],
+
+    journal:[
+        "Jurnal Umum",
+        "Catatan debit dan kredit."
+    ],
+
+    ledger:[
+        "Buku Besar",
+        "Ringkasan saldo setiap akun."
+    ],
+
+    income:[
+        "Laba Rugi",
+        "Lihat performa keuntungan bisnis."
+    ],
+
+    balance:[
+        "Neraca",
+        "Lihat posisi aset dan kewajiban."
+    ],
+
+    cash:[
+        "Kas & Bank",
+        "Pantau arus kas bisnis."
+    ],
+
+    products:[
+        "Produk",
+        "Kelola persediaan dan produk."
+    ],
+
+    customers:[
+        "Pelanggan",
+        "Kelola data pelanggan."
+    ],
+
+    suppliers:[
+        "Pemasok",
+        "Kelola data supplier."
+    ],
+
+    calculator:[
+        "HPP & BEP",
+        "Hitung HPP dan titik impas."
+    ]
+
+};
+
+
+navItems.forEach(item => {
+
+    item.addEventListener("click",function() {
+
+        const page =
+            this.dataset.page;
+
+
+        navItems.forEach(n =>
+            n.classList.remove("active")
+        );
+
+        this.classList.add("active");
+
+
+        pages.forEach(p =>
+            p.classList.remove("active")
+        );
+
+
+        document
+            .getElementById(page)
+            .classList.add("active");
+
+
+        document
+            .getElementById("pageTitle")
+            .textContent =
+            titles[page][0];
+
+
+        document
+            .getElementById("pageSubtitle")
+            .textContent =
+            titles[page][1];
+
+
+        refreshEverything();
+
+
+        document
+            .getElementById("sidebar")
+            .classList.remove("open");
+
+    });
+
+});
+
+
+/* =====================================================
+   CALCULATE TOTALS
+===================================================== */
+
+function calculateTotals() {
+
+    const data =
+        getPeriodTransactions();
+
+
+    const income =
+        data
+        .filter(t => t.type === "income")
+        .reduce(
+            (sum,t) =>
+                sum + Number(t.amount),
+            0
+        );
+
+
+    const expense =
+        data
+        .filter(t => t.type === "expense")
+        .reduce(
+            (sum,t) =>
+                sum + Number(t.amount),
+            0
+        );
+
+
+    return {
+
+        income,
+
+        expense,
+
+        balance:
+            income - expense,
+
+        profit:
+            income - expense
+
+    };
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function updateDashboard() {
+
+    const totals =
+        calculateTotals();
+
+
+    document
+        .getElementById("totalIncome")
+        .textContent =
+        formatRupiah(totals.income);
+
+
+    document
+        .getElementById("totalExpense")
+        .textContent =
+        formatRupiah(totals.expense);
+
+
+    document
+        .getElementById("totalBalance")
+        .textContent =
+        formatRupiah(totals.balance);
+
+
+    document
+        .getElementById("netProfit")
+        .textContent =
+        formatRupiah(totals.profit);
+
+
+    document
+        .getElementById("recentPeriodText")
+        .textContent =
+        getPeriodText();
+
+
+    renderRecent();
+
+    renderCharts();
+
+}
+
+
+function renderRecent() {
+
+    const tbody =
+        document.getElementById("recentTable");
+
+
+    const data =
+        getPeriodTransactions()
+        .sort(
+            (a,b) =>
+                new Date(b.date) -
+                new Date(a.date)
+        )
+        .slice(0,6);
+
+
+    if(data.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty">
+                        <div class="empty-icon">
+                            📭
+                        </div>
+                        Belum ada transaksi pada periode ini.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        data.map(t => `
+
+            <tr>
+
+                <td>
+                    ${t.date}
+                </td>
+
+                <td>
+                    <b>
+                        ${escapeHTML(t.description)}
+                    </b>
+                </td>
+
+                <td>
+                    ${t.category}
+                </td>
+
+                <td>
+
+                    <span
+                        class="badge ${
+                            t.type === "income"
+                            ? "in"
+                            : "out"
+                        }">
+
+                        ${
+                            t.type === "income"
+                            ? "Pemasukan"
+                            : "Pengeluaran"
+                        }
+
+                    </span>
+
+                </td>
+
+                <td>
+                    <b>
+                        ${formatRupiah(t.amount)}
+                    </b>
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+/* =====================================================
+   CHART
+===================================================== */
+
+let financeChart = null;
+let pieChart = null;
+
+
+function renderCharts() {
+
+    const data =
+        getPeriodTransactions();
+
+
+    const income =
+        data
+        .filter(t => t.type === "income")
+        .reduce(
+            (sum,t) =>
+                sum + Number(t.amount),
+            0
+        );
+
+
+    const expense =
+        data
+        .filter(t => t.type === "expense")
+        .reduce(
+            (sum,t) =>
+                sum + Number(t.amount),
+            0
+        );
+
+
+    const ctx =
+        document
+        .getElementById("financeChart")
+        .getContext("2d");
+
+
+    if(financeChart)
+        financeChart.destroy();
+
+
+    financeChart =
+        new Chart(ctx,{
+
+            type:"bar",
+
+            data:{
+
+                labels:[
+                    "Pemasukan",
+                    "Pengeluaran",
+                    "Laba Bersih"
+                ],
+
+                datasets:[{
+
+                    label:getPeriodText(),
+
+                    data:[
+                        income,
+                        expense,
+                        income - expense
+                    ],
+
+                    borderRadius:10,
+
+                    borderWidth:0
+
+                }]
+
+            },
+
+            options:{
+
+                responsive:true,
+
+                maintainAspectRatio:false,
+
+                plugins:{
+
+                    legend:{
+                        display:true
+                    }
+
+                },
+
+                scales:{
+
+                    y:{
+
+                        beginAtZero:true,
+
+                        ticks:{
+
+                            callback:function(value) {
+
+                                return "Rp " +
+                                    Number(value)
+                                    .toLocaleString("id-ID");
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+
+    const pieCtx =
+        document
+        .getElementById("pieChart")
+        .getContext("2d");
+
+
+    if(pieChart)
+        pieChart.destroy();
+
+
+    pieChart =
+        new Chart(pieCtx,{
+
+            type:"doughnut",
+
+            data:{
+
+                labels:[
+                    "Pemasukan",
+                    "Pengeluaran"
+                ],
+
+                datasets:[{
+
+                    data:[
+                        income,
+                        expense
+                    ],
+
+                    borderWidth:0
+
+                }]
+
+            },
+
+            options:{
+
+                responsive:true,
+
+                maintainAspectRatio:false,
+
+                cutout:"70%",
+
+                plugins:{
+
+                    legend:{
+                        position:"bottom"
+                    }
+
+                }
+
+            }
+
+        });
+
+
+    document
+        .getElementById("chartPeriodLabel")
+        .textContent =
+        getPeriodText();
+
+}
+
+
+/* =====================================================
+   TRANSACTIONS
+===================================================== */
+
+function renderTransactions(filter="") {
+
+    const tbody =
+        document.getElementById("transactionTable");
+
+
+    const type =
+        document.getElementById("transactionType").value;
+
+
+    let data =
+        getPeriodTransactions();
+
+
+    if(filter) {
+
+        data =
+            data.filter(t =>
+
+                t.description
+                    .toLowerCase()
+                    .includes(
+                        filter.toLowerCase()
+                    )
+
+                ||
+
+                t.category
+                    .toLowerCase()
+                    .includes(
+                        filter.toLowerCase()
+                    )
+
+            );
+
+    }
+
+
+    if(type) {
+
+        data =
+            data.filter(
+                t => t.type === type
+            );
+
+    }
+
+
+    data.sort(
+        (a,b) =>
+            new Date(b.date) -
+            new Date(a.date)
+    );
+
+
+    if(data.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    <div class="empty">
+                        📭 Tidak ada transaksi pada periode ini.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        data.map(t => `
+
+            <tr>
+
+                <td>
+                    ${t.date}
+                </td>
+
+                <td>
+                    <b>
+                        ${escapeHTML(t.description)}
+                    </b>
+                </td>
+
+                <td>
+                    ${t.category}
+                </td>
+
+                <td>
+
+                    <span
+                        class="badge ${
+                            t.type === "income"
+                            ? "in"
+                            : "out"
+                        }">
+
+                        ${
+                            t.type === "income"
+                            ? "Pemasukan"
+                            : "Pengeluaran"
+                        }
+
+                    </span>
+
+                </td>
+
+                <td>
+                    <b>
+                        ${formatRupiah(t.amount)}
+                    </b>
+                </td>
+
+                <td>
+
+                    <button
+                        class="action-btn"
+                        onclick="deleteTransaction(${t.id})">
+
+                        🗑
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+document
+.getElementById("transactionSearch")
+.addEventListener("input",function() {
+
+    renderTransactions(this.value);
+
+});
+
+
+document
+.getElementById("transactionType")
+.addEventListener("change",function() {
+
+    renderTransactions(
+        document
+        .getElementById("transactionSearch")
+        .value
+    );
+
+});
+
+
+/* =====================================================
+   ADD TRANSACTION
+===================================================== */
+
+function openTransactionModal() {
+
+    document
+        .getElementById("transactionModal")
+        .classList.add("show");
+
+
+    let date;
+
+
+    if(allPeriods) {
+
+        date =
+            new Date()
+            .toISOString()
+            .split("T")[0];
+
+    } else {
+
+        date =
+            `${selectedYear}-${String(
+                selectedMonth + 1
+            ).padStart(2,"0")}-01`;
+
+    }
+
+
+    document
+        .getElementById("transactionDate")
+        .value =
+        date;
+
+}
+
+
+function closeTransactionModal() {
+
+    document
+        .getElementById("transactionModal")
+        .classList.remove("show");
+
+
+    document
+        .getElementById("transactionForm")
+        .reset();
+
+}
+
+
+document
+.getElementById("transactionForm")
+.addEventListener("submit",function(e) {
+
+    e.preventDefault();
+
+
+    const date =
+        document
+        .getElementById("transactionDate")
+        .value;
+
+
+    const dateObj =
+        new Date(date + "T00:00:00");
+
+
+    if(!allPeriods) {
+
+        if(
+            dateObj.getMonth() !== selectedMonth ||
+            dateObj.getFullYear() !== selectedYear
+        ) {
+
+            alert(
+                `Tanggal transaksi harus berada di ${getPeriodText()}.`
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    const newTransaction = {
+
+        id:Date.now(),
+
+        date,
+
+        description:
+            document
+            .getElementById(
+                "transactionDescription"
+            )
+            .value,
+
+        category:
+            document
+            .getElementById(
+                "transactionCategory"
+            )
+            .value,
+
+        type:
+            document
+            .getElementById(
+                "transactionKind"
+            )
+            .value,
+
+        amount:
+            Number(
+                document
+                .getElementById(
+                    "transactionAmount"
+                )
+                .value
+            )
+
+    };
+
+
+    transactions.push(
+        newTransaction
+    );
+
+
+    saveData();
+
+    closeTransactionModal();
+
+    refreshEverything();
+
+
+    alert(
+        `Transaksi berhasil ditambahkan ke ${formatDatePeriod(date)} 🚀`
+    );
+
+});
+
+
+function formatDatePeriod(date) {
+
+    const d =
+        new Date(date + "T00:00:00");
+
+    return `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+
+}
+
+
+/* =====================================================
+   DELETE TRANSACTION
+===================================================== */
+
+function deleteTransaction(id) {
+
+    if(
+        !confirm(
+            "Yakin mau hapus transaksi ini?"
+        )
+    )
+        return;
+
+
+    transactions =
+        transactions.filter(
+            t => t.id !== id
+        );
+
+
+    saveData();
+
+    refreshEverything();
+
+}
+
+
+/* =====================================================
+   JOURNAL
+===================================================== */
+
+function renderJournal() {
+
+    const tbody =
+        document.getElementById(
+            "journalTable"
+        );
+
+
+    document
+        .getElementById("journalPeriod")
+        .textContent =
+        `Periode: ${getPeriodText()}`;
+
+
+    const data =
+        getPeriodTransactions();
+
+
+    if(data.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty">
+                        📖 Belum ada jurnal pada periode ini.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        data.map(t => {
+
+            const income =
+                t.type === "income";
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${t.date}
+                    </td>
+
+                    <td>
+                        ${
+                            income
+                            ? "Kas / Bank"
+                            : t.category
+                        }
+                    </td>
+
+                    <td>
+                        ${escapeHTML(t.description)}
+                    </td>
+
+                    <td>
+
+                        ${
+                            income
+                            ? formatRupiah(t.amount)
+                            : "-"
+                        }
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            !income
+                            ? formatRupiah(t.amount)
+                            : "-"
+                        }
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   LEDGER
+===================================================== */
+
+function renderLedger() {
+
+    const tbody =
+        document.getElementById(
+            "ledgerTable"
+        );
+
+
+    document
+        .getElementById("ledgerPeriod")
+        .textContent =
+        `Periode: ${getPeriodText()}`;
+
+
+    const totals =
+        calculateTotals();
+
+
+    tbody.innerHTML = `
+
+        <tr>
+
+            <td>
+                <b>Kas / Bank</b>
+            </td>
+
+            <td>
+                ${formatRupiah(totals.income)}
+            </td>
+
+            <td>
+                ${formatRupiah(totals.expense)}
+            </td>
+
+            <td>
+                <b>
+                    ${formatRupiah(totals.balance)}
+                </b>
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <b>Pendapatan</b>
+            </td>
+
+            <td>
+                Rp 0
+            </td>
+
+            <td>
+                ${formatRupiah(totals.income)}
+            </td>
+
+            <td>
+                ${formatRupiah(totals.income)}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <b>Beban</b>
+            </td>
+
+            <td>
+                ${formatRupiah(totals.expense)}
+            </td>
+
+            <td>
+                Rp 0
+            </td>
+
+            <td>
+                ${formatRupiah(totals.expense)}
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
+
+/* =====================================================
+   INCOME REPORT
+===================================================== */
+
+function renderIncome() {
+
+    const totals =
+        calculateTotals();
+
+
+    document
+        .getElementById("incomePeriod")
+        .textContent =
+        `Periode: ${getPeriodText()}`;
+
+
+    document
+        .getElementById("reportIncome")
+        .textContent =
+        formatRupiah(totals.income);
+
+
+    document
+        .getElementById("reportHpp")
+        .textContent =
+        "Rp 0";
+
+
+    document
+        .getElementById("grossProfit")
+        .textContent =
+        formatRupiah(totals.income);
+
+
+    document
+        .getElementById("reportExpense")
+        .textContent =
+        formatRupiah(totals.expense);
+
+
+    document
+        .getElementById("reportProfit")
+        .textContent =
+        formatRupiah(totals.profit);
+
+}
+
+
+/* =====================================================
+   BALANCE
+===================================================== */
+
+function renderBalance() {
+
+    const totals =
+        calculateTotals();
+
+
+    document
+        .getElementById("balancePeriod")
+        .textContent =
+        `Periode: ${getPeriodText()}`;
+
+
+    document
+        .getElementById("balanceCash")
+        .textContent =
+        formatRupiah(totals.balance);
+
+
+    document
+        .getElementById("totalAsset")
+        .textContent =
+        formatRupiah(totals.balance);
+
+
+    document
+        .getElementById("balanceCapital")
+        .textContent =
+        formatRupiah(totals.balance);
+
+
+    document
+        .getElementById("balanceProfit")
+        .textContent =
+        formatRupiah(totals.profit);
+
+}
+
+
+/* =====================================================
+   CASH
+===================================================== */
+
+function renderCash() {
+
+    const data =
+        getPeriodTransactions();
+
+
+    const totals =
+        calculateTotals();
+
+
+    document
+        .getElementById("cashPeriod")
+        .textContent =
+        `Periode: ${getPeriodText()}`;
+
+
+    document
+        .getElementById("cashIn")
+        .textContent =
+        formatRupiah(totals.income);
+
+
+    document
+        .getElementById("cashOut")
+        .textContent =
+        formatRupiah(totals.expense);
+
+
+    document
+        .getElementById("cashBalance")
+        .textContent =
+        formatRupiah(totals.balance);
+
+
+    document
+        .getElementById("cashTransactions")
+        .textContent =
+        data.length;
+
+
+    const tbody =
+        document.getElementById(
+            "cashTable"
+        );
+
+
+    let balance = 0;
+
+
+    const sorted =
+        [...data].sort(
+            (a,b) =>
+                new Date(a.date) -
+                new Date(b.date)
+        );
+
+
+    tbody.innerHTML =
+        sorted.map(t => {
+
+            if(t.type === "income") {
+
+                balance +=
+                    Number(t.amount);
+
+            } else {
+
+                balance -=
+                    Number(t.amount);
+
+            }
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${t.date}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(t.description)}
+                    </td>
+
+                    <td>
+
+                        ${
+                            t.type === "income"
+                            ? formatRupiah(t.amount)
+                            : "-"
+                        }
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            t.type === "expense"
+                            ? formatRupiah(t.amount)
+                            : "-"
+                        }
+
+                    </td>
+
+                    <td>
+                        <b>
+                            ${formatRupiah(balance)}
+                        </b>
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+
+    if(data.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty">
+                        💰 Tidak ada mutasi pada periode ini.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
+let products = [
+
+    {
+        code:"PRD001",
+        name:"Produk A",
+        stock:25,
+        buy:50000,
+        sell:85000
+    },
+
+    {
+        code:"PRD002",
+        name:"Produk B",
+        stock:8,
+        buy:75000,
+        sell:120000
+    },
+
+    {
+        code:"PRD003",
+        name:"Produk C",
+        stock:50,
+        buy:30000,
+        sell:55000
+    }
+
+];
+
+
+function renderProducts() {
+
+    document
+        .getElementById("productTable")
+        .innerHTML =
+
+        products.map(p => `
+
+            <tr>
+
+                <td>
+                    ${p.code}
+                </td>
+
+                <td>
+                    <b>
+                        ${p.name}
+                    </b>
+                </td>
+
+                <td>
+                    ${p.stock}
+                </td>
+
+                <td>
+                    ${formatRupiah(p.buy)}
+                </td>
+
+                <td>
+                    ${formatRupiah(p.sell)}
+                </td>
+
+                <td>
+
+                    <span
+                        class="badge ${
+                            p.stock < 10
+                            ? "out"
+                            : "in"
+                        }">
+
+                        ${
+                            p.stock < 10
+                            ? "Stok Menipis"
+                            : "Tersedia"
+                        }
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+function addProduct() {
+
+    const name =
+        prompt("Nama produk:");
+
+    if(!name)
+        return;
+
+
+    const stock =
+        Number(
+            prompt("Jumlah stok:") || 0
+        );
+
+
+    const buy =
+        Number(
+            prompt("Harga beli:") || 0
+        );
+
+
+    const sell =
+        Number(
+            prompt("Harga jual:") || 0
+        );
+
+
+    products.push({
+
+        code:
+            "PRD" +
+            String(
+                products.length + 1
+            ).padStart(3,"0"),
+
+        name,
+        stock,
+        buy,
+        sell
+
+    });
+
+
+    renderProducts();
+
+}
+
+
+/* =====================================================
+   CUSTOMERS
+===================================================== */
+
+let customers = [
+
+    {
+        name:"Andi Saputra",
+        phone:"08123456789",
+        email:"andi@email.com",
+        debt:1500000
+    },
+
+    {
+        name:"Budi Santoso",
+        phone:"082233445566",
+        email:"budi@email.com",
+        debt:0
+    }
+
+];
+
+
+function renderCustomers() {
+
+    document
+        .getElementById("customerTable")
+        .innerHTML =
+
+        customers.map(c => `
+
+            <tr>
+
+                <td>
+                    <b>
+                        ${c.name}
+                    </b>
+                </td>
+
+                <td>
+                    ${c.phone}
+                </td>
+
+                <td>
+                    ${c.email}
+                </td>
+
+                <td>
+                    ${formatRupiah(c.debt)}
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+function addCustomer() {
+
+    const name =
+        prompt("Nama pelanggan:");
+
+    if(!name)
+        return;
+
+
+    const phone =
+        prompt("Nomor telepon:") || "-";
+
+
+    const email =
+        prompt("Email:") || "-";
+
+
+    customers.push({
+
+        name,
+        phone,
+        email,
+        debt:0
+
+    });
+
+
+    renderCustomers();
+
+}
+
+
+/* =====================================================
+   SUPPLIERS
+===================================================== */
+
+let suppliers = [
+
+    {
+        name:"PT Sumber Makmur",
+        phone:"081111222333",
+        email:"supplier@email.com",
+        debt:2500000
+    },
+
+    {
+        name:"CV Maju Jaya",
+        phone:"082211223344",
+        email:"maju@email.com",
+        debt:1000000
+    }
+
+];
+
+
+function renderSuppliers() {
+
+    document
+        .getElementById("supplierTable")
+        .innerHTML =
+
+        suppliers.map(s => `
+
+            <tr>
+
+                <td>
+                    <b>
+                        ${s.name}
+                    </b>
+                </td>
+
+                <td>
+                    ${s.phone}
+                </td>
+
+                <td>
+                    ${s.email}
+                </td>
+
+                <td>
+                    ${formatRupiah(s.debt)}
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+function addSupplier() {
+
+    const name =
+        prompt("Nama pemasok:");
+
+    if(!name)
+        return;
+
+
+    const phone =
+        prompt("Nomor telepon:") || "-";
+
+
+    const email =
+        prompt("Email:") || "-";
+
+
+    suppliers.push({
+
+        name,
+        phone,
+        email,
+        debt:0
+
+    });
+
+
+    renderSuppliers();
+
+}
+
+
+/* =====================================================
+   HPP
+===================================================== */
+
+function calculateHPP() {
+
+    const raw =
+        Number(
+            document
+            .getElementById("rawMaterial")
+            .value
+        );
+
+
+    const labor =
+        Number(
+            document
+            .getElementById("labor")
+            .value
+        );
+
+
+    const overhead =
+        Number(
+            document
+            .getElementById("overhead")
+            .value
+        );
+
+
+    const production =
+        Number(
+            document
+            .getElementById("production")
+            .value
+        );
+
+
+    if(production <= 0) {
+
+        alert(
+            "Jumlah produksi harus lebih dari 0."
+        );
+
+        return;
+
+    }
+
+
+    const total =
+        raw +
+        labor +
+        overhead;
+
+
+    const hpp =
+        total / production;
+
+
+    document
+        .getElementById("hppResult")
+        .textContent =
+        formatRupiah(hpp);
+
+}
+
+
+/* =====================================================
+   BEP
+===================================================== */
+
+function calculateBEP() {
+
+    const fixed =
+        Number(
+            document
+            .getElementById("fixedCost")
+            .value
+        );
+
+
+    const selling =
+        Number(
+            document
+            .getElementById("sellingPrice")
+            .value
+        );
+
+
+    const variable =
+        Number(
+            document
+            .getElementById("variableCost")
+            .value
+        );
+
+
+    const margin =
+        selling -
+        variable;
+
+
+    if(margin <= 0) {
+
+        document
+            .getElementById("bepResult")
+            .textContent =
+            "Tidak valid";
+
+        return;
+
+    }
+
+
+    const bep =
+        Math.ceil(
+            fixed / margin
+        );
+
+
+    document
+        .getElementById("bepResult")
+        .textContent =
+        bep + " Unit";
+
+}
+
+
+/* =====================================================
+   EXPORT CSV
+===================================================== */
+
+function exportCSV() {
+
+    const data =
+        getPeriodTransactions();
+
+
+    let csv =
+        "Tanggal,Keterangan,Kategori,Jenis,Nominal\n";
+
+
+    data.forEach(t => {
+
+        csv +=
+            `"${t.date}","${t.description}","${t.category}","${t.type}","${t.amount}"\n`;
+
+    });
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:"text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href =
+        url;
+
+
+    a.download =
+        `laporan-${allPeriods ? "semua-periode" : selectedYear+"-"+String(selectedMonth+1).padStart(2,"0")}.csv`;
+
+
+    a.click();
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =====================================================
+   THEME
+===================================================== */
+
+const themeBtn =
+    document.getElementById(
+        "themeBtn"
+    );
+
+
+themeBtn.addEventListener(
+    "click",
+    function() {
+
+        document.body
+            .classList.toggle("dark");
+
+
+        const dark =
+            document.body
+                .classList
+                .contains("dark");
+
+
+        localStorage.setItem(
+            "glassTheme",
+            dark
+            ? "dark"
+            : "light"
+        );
+
+
+        themeBtn.textContent =
+            dark
+            ? "☀️"
+            : "🌙";
+
+
+        renderCharts();
+
+    }
+);
+
+
+if(
+    localStorage.getItem(
+        "glassTheme"
+    ) === "dark"
+) {
+
+    document.body
+        .classList
+        .add("dark");
+
+    themeBtn.textContent =
+        "☀️";
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+document
+.getElementById("menuBtn")
+.addEventListener("click",function() {
+
+    document
+        .getElementById("sidebar")
+        .classList
+        .toggle("open");
+
+});
+
+
+/* =====================================================
+   NOTIFICATION
+===================================================== */
+
+document
+.getElementById("notifyBtn")
+.addEventListener("click",function() {
+
+    alert(
+        "🔔 Notifikasi\n\n" +
+        "• Sistem berjalan normal\n" +
+        "• Data tersimpan otomatis\n" +
+        "• Periode aktif: " +
+        getPeriodText()
+    );
+
+});
+
+
+/* =====================================================
+   REFRESH SEMUA FITUR
+===================================================== */
+
+function refreshEverything() {
+
+    updatePeriodUI();
+
+    updateDashboard();
+
+    renderTransactions(
+        document
+        .getElementById(
+            "transactionSearch"
+        )
+        .value
+    );
+
+    renderJournal();
+
+    renderLedger();
+
+    renderIncome();
+
+    renderBalance();
+
+    renderCash();
+
+    renderProducts();
+
+    renderCustomers();
+
+    renderSuppliers();
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+function init() {
+
+    initializePeriod();
+
+    updateDashboard();
+
+    renderTransactions();
+
+    renderJournal();
+
+    renderLedger();
+
+    renderIncome();
+
+    renderBalance();
+
+    renderCash();
+
+    renderProducts();
+
+    renderCustomers();
+
+    renderSuppliers();
+
+}
+
+
+init();
+
+</script>
+
 </body>
 </html>
