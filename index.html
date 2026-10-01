@@ -3844,41 +3844,45 @@ function closeChangePasswordModal(){
   if(m){m.setAttribute('aria-hidden','true');m.style.display='none';m.style.visibility='hidden';m.style.opacity='0';m.style.pointerEvents='none';}
 }
 async function sendPasswordResetVerification(){
-  const authUser=(typeof firebaseAuth!=='undefined' && firebaseAuth.currentUser)?firebaseAuth.currentUser:null;
-  const email=(authUser?.email || currentUser?.email || '').trim();
-  const btn=document.getElementById('sendPasswordResetBtn');
-  const st=document.getElementById('changePasswordStatus');
-  const setStatus=(text,ok=false)=>{
-    if(st){st.textContent=text;st.className='profile-photo-status '+(ok?'success':'');}
+  const authUser = (typeof firebaseAuth !== "undefined" && firebaseAuth.currentUser) ? firebaseAuth.currentUser : null;
+  const email = (authUser?.email || currentUser?.email || "").trim().toLowerCase();
+  const btn = document.getElementById("sendPasswordResetBtn");
+  const st = document.getElementById("changePasswordStatus");
+  const setStatus = (text, ok=false) => {
+    if(st){ st.textContent=text; st.className="profile-photo-status "+(ok?"success":""); }
   };
-  if(!email){
-    setStatus('❌ Email akun tidak tersedia. Silakan keluar lalu login kembali.');
-    return;
+  if(!email){ setStatus("❌ Email akun tidak ditemukan. Silakan login kembali."); return; }
+  if(typeof firebaseAuth === "undefined" || !firebaseAuth || typeof firebaseAuth.sendPasswordResetEmail !== "function"){
+    setStatus("❌ Firebase Authentication belum siap. Muat ulang halaman."); return;
   }
-  if(typeof firebaseAuth==='undefined' || !firebaseAuth || typeof firebaseAuth.sendPasswordResetEmail!=='function'){
-    setStatus('❌ Firebase Authentication belum siap. Muat ulang halaman lalu coba lagi.');
-    return;
-  }
-  if(btn){btn.disabled=true;btn.textContent='📨 Mengirim email...';}
-  setStatus('Sedang mengirim email reset password ke '+email+'...');
+  if(btn){ btn.disabled=true; btn.textContent="📨 Mengirim email..."; }
+  setStatus("Sedang mengirim link reset password ke "+email+"...");
   try{
-    // Jangan memakai continueUrl file:// karena aplikasi sering dibuka langsung dari file HTML.
-    // Firebase akan menggunakan halaman reset password bawaannya di authDomain.
     firebaseAuth.useDeviceLanguage();
+    // Jangan kirim continueUrl dari GitHub Pages/file://. Firebase akan memakai
+    // action handler bawaannya sehingga link reset tetap valid.
     await firebaseAuth.sendPasswordResetEmail(email);
-    setStatus('✅ Email reset password berhasil diminta untuk '+email+'. Periksa Inbox, Spam, atau Promosi.',true);
+    setStatus("✅ Link reset password sudah dikirim ke "+email+". Cek Inbox, Spam, Promosi, dan tab Updates.",true);
   }catch(err){
-    console.error('Password reset Firebase:',err);
-    const code=err?.code||'';
-    let msg=typeof friendlyFirebaseError==='function'?friendlyFirebaseError(err):(err?.message||'Kesalahan Firebase.');
-    if(code==='auth/user-not-found') msg='Akun dengan email tersebut tidak ditemukan di Firebase Authentication.';
-    if(code==='auth/operation-not-allowed') msg='Login Email/Password belum diaktifkan di Firebase Console → Authentication → Sign-in method.';
-    if(code==='auth/unauthorized-continue-uri') msg='Domain belum diizinkan Firebase. Tambahkan domain website pada Authentication → Settings → Authorized domains.';
-    setStatus('❌ '+msg+' ('+code+')');
+    console.error("Password reset Firebase:",err);
+    const code=err?.code||"";
+    const messages={
+      "auth/user-not-found":"Email ini belum terdaftar di Firebase Authentication.",
+      "auth/invalid-email":"Format email akun tidak valid.",
+      "auth/operation-not-allowed":"Login Email/Password belum diaktifkan di Firebase Authentication.",
+      "auth/too-many-requests":"Terlalu banyak permintaan reset password. Tunggu beberapa saat lalu coba lagi.",
+      "auth/quota-exceeded":"Kuota pengiriman email Firebase sedang tercapai. Coba lagi nanti.",
+      "auth/network-request-failed":"Koneksi ke Firebase gagal. Periksa internet lalu coba lagi.",
+      "auth/invalid-api-key":"Firebase API key tidak valid.",
+      "auth/app-not-authorized":"Domain GitHub Pages belum diizinkan oleh Firebase Authentication. Tambahkan domain GitHub Pages di Authorized domains.",
+      "auth/internal-error":"Firebase mengalami error internal saat mengirim email. Coba lagi beberapa saat lagi."
+    };
+    setStatus("❌ "+(messages[code] || err?.message || "Gagal mengirim email")+(code?" ["+code+"]":""));
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='📧 Kirim Verifikasi Email';}
+    if(btn){ btn.disabled=false; btn.textContent="📧 Kirim Verifikasi Email"; }
   }
 }
+
 window.openChangePasswordModal=openChangePasswordModal;
 window.closeChangePasswordModal=closeChangePasswordModal;
 window.sendPasswordResetVerification=sendPasswordResetVerification;
