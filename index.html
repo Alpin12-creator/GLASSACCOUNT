@@ -3345,6 +3345,38 @@ tr:hover td {
   </div>
 </div>
 
+
+<div class="modal-overlay" id="passwordResetModal" style="display:none;z-index:10002;">
+  <div class="modal glass" style="max-width:460px;width:calc(100% - 32px);">
+    <div class="modal-header">
+      <div>
+        <h3>🔐 Buat Password Baru</h3>
+        <span>Masukkan password baru untuk akun GlassAccount.</span>
+      </div>
+      <button class="icon-btn" type="button" onclick="closePasswordResetModal()">✕</button>
+    </div>
+    <div class="glass" style="padding:14px;line-height:1.7;margin-bottom:14px;">
+      <div style="font-size:13px;">Akun:</div>
+      <div id="passwordResetEmail" style="font-weight:800;margin-top:5px;word-break:break-word;">Memeriksa...</div>
+    </div>
+    <div id="passwordResetError" class="profile-photo-status" style="margin-bottom:10px;"></div>
+    <form id="passwordResetForm" onsubmit="confirmNewPassword(event)">
+      <div class="form-group">
+        <label for="newPasswordInput">Password Baru</label>
+        <input id="newPasswordInput" type="password" minlength="6" autocomplete="new-password" placeholder="Minimal 6 karakter" required>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label for="confirmNewPasswordInput">Konfirmasi Password Baru</label>
+        <input id="confirmNewPasswordInput" type="password" minlength="6" autocomplete="new-password" placeholder="Ulangi password baru" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" onclick="closePasswordResetModal()">Batal</button>
+        <button class="btn" id="confirmPasswordResetBtn" type="submit">🔑 Simpan Password Baru</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="modal-overlay" id="profileDetailsModal" style="display:none;z-index:10000;">
   <div class="modal glass" style="max-width:430px;width:calc(100% - 32px);">
     <div class="modal-header">
@@ -3844,48 +3876,149 @@ function closeChangePasswordModal(){
   if(m){m.setAttribute('aria-hidden','true');m.style.display='none';m.style.visibility='hidden';m.style.opacity='0';m.style.pointerEvents='none';}
 }
 async function sendPasswordResetVerification(){
-  const authUser = (typeof firebaseAuth !== "undefined" && firebaseAuth.currentUser) ? firebaseAuth.currentUser : null;
-  const email = (authUser?.email || currentUser?.email || "").trim().toLowerCase();
-  const btn = document.getElementById("sendPasswordResetBtn");
-  const st = document.getElementById("changePasswordStatus");
-  const setStatus = (text, ok=false) => {
-    if(st){ st.textContent=text; st.className="profile-photo-status "+(ok?"success":""); }
+  const authUser=(typeof firebaseAuth!=="undefined" && firebaseAuth.currentUser)?firebaseAuth.currentUser:null;
+  const email=(authUser?.email || currentUser?.email || "").trim().toLowerCase();
+  const btn=document.getElementById("sendPasswordResetBtn");
+  const st=document.getElementById("changePasswordStatus");
+  const setStatus=(text,ok=false)=>{
+    if(st){st.textContent=text;st.className="profile-photo-status "+(ok?"success":"");}
   };
-  if(!email){ setStatus("❌ Email akun tidak ditemukan. Silakan login kembali."); return; }
-  if(typeof firebaseAuth === "undefined" || !firebaseAuth || typeof firebaseAuth.sendPasswordResetEmail !== "function"){
-    setStatus("❌ Firebase Authentication belum siap. Muat ulang halaman."); return;
+  if(!email){setStatus("❌ Email akun tidak ditemukan. Silakan login kembali.");return;}
+  if(typeof firebaseAuth==="undefined" || !firebaseAuth || typeof firebaseAuth.sendPasswordResetEmail!=="function"){
+    setStatus("❌ Firebase Authentication belum siap. Muat ulang halaman.");return;
   }
-  if(btn){ btn.disabled=true; btn.textContent="📨 Mengirim email..."; }
-  setStatus("Sedang mengirim link reset password ke "+email+"...");
+  if(btn){btn.disabled=true;btn.textContent="📨 Mengirim email...";}
+  setStatus("Sedang membuat link reset password untuk "+email+"...");
   try{
     firebaseAuth.useDeviceLanguage();
-    // Jangan kirim continueUrl dari GitHub Pages/file://. Firebase akan memakai
-    // action handler bawaannya sehingga link reset tetap valid.
-    await firebaseAuth.sendPasswordResetEmail(email);
-    setStatus("✅ Link reset password sudah dikirim ke "+email+". Cek Inbox, Spam, Promosi, dan tab Updates.",true);
+    const returnUrl=window.location.href.split("#")[0].split("?")[0];
+    const actionCodeSettings={url:returnUrl,handleCodeInApp:false};
+    await firebaseAuth.sendPasswordResetEmail(email,actionCodeSettings);
+    setStatus("✅ Link reset password sudah dikirim ke "+email+". Buka email tersebut, klik linknya, lalu buat password baru.",true);
   }catch(err){
-    console.error("Password reset Firebase:",err);
+    console.error("Firebase password reset:",err);
     const code=err?.code||"";
     const messages={
       "auth/user-not-found":"Email ini belum terdaftar di Firebase Authentication.",
       "auth/invalid-email":"Format email akun tidak valid.",
       "auth/operation-not-allowed":"Login Email/Password belum diaktifkan di Firebase Authentication.",
-      "auth/too-many-requests":"Terlalu banyak permintaan reset password. Tunggu beberapa saat lalu coba lagi.",
-      "auth/quota-exceeded":"Kuota pengiriman email Firebase sedang tercapai. Coba lagi nanti.",
-      "auth/network-request-failed":"Koneksi ke Firebase gagal. Periksa internet lalu coba lagi.",
+      "auth/too-many-requests":"Terlalu banyak permintaan. Tunggu beberapa saat lalu coba lagi.",
+      "auth/quota-exceeded":"Kuota email Firebase tercapai. Coba lagi nanti.",
+      "auth/network-request-failed":"Koneksi ke Firebase gagal. Periksa internet.",
       "auth/invalid-api-key":"Firebase API key tidak valid.",
-      "auth/app-not-authorized":"Domain GitHub Pages belum diizinkan oleh Firebase Authentication. Tambahkan domain GitHub Pages di Authorized domains.",
-      "auth/internal-error":"Firebase mengalami error internal saat mengirim email. Coba lagi beberapa saat lagi."
+      "auth/app-not-authorized":"Domain website belum diizinkan Firebase Authentication.",
+      "auth/invalid-continue-uri":"Alamat kembali reset password tidak diizinkan Firebase.",
+      "auth/unauthorized-continue-uri":"Tambahkan domain GitHub Pages ke Firebase Authentication → Settings → Authorized domains.",
+      "auth/internal-error":"Firebase mengalami error internal saat mengirim email."
     };
-    setStatus("❌ "+(messages[code] || err?.message || "Gagal mengirim email")+(code?" ["+code+"]":""));
+    setStatus("❌ "+(messages[code]||err?.message||"Gagal mengirim email")+(code?" ["+code+"]":""));
   }finally{
-    if(btn){ btn.disabled=false; btn.textContent="📧 Kirim Verifikasi Email"; }
+    if(btn){btn.disabled=false;btn.textContent="📧 Kirim Verifikasi Email";}
+  }
+}
+
+function getPasswordResetParams(){
+  const params=new URLSearchParams(window.location.search);
+  return {mode:(params.get("mode")||"").trim(),oobCode:(params.get("oobCode")||"").trim()};
+}
+function showPasswordResetModal(){
+  const m=document.getElementById("passwordResetModal");
+  if(!m)return;
+  m.style.display="flex";m.style.visibility="visible";m.style.opacity="1";m.style.pointerEvents="auto";m.setAttribute("aria-hidden","false");
+}
+function closePasswordResetModal(){
+  const m=document.getElementById("passwordResetModal");
+  if(m){m.style.display="none";m.style.visibility="hidden";m.style.opacity="0";m.style.pointerEvents="none";m.setAttribute("aria-hidden","true");}
+}
+
+async function handlePasswordResetFromEmail(){
+  const {mode,oobCode}=getPasswordResetParams();
+  if(mode!=="resetPassword" || !oobCode)return false;
+
+  const authScreen=document.getElementById("authScreen");
+  const appShell=document.getElementById("appShell");
+  if(authScreen)authScreen.style.display="none";
+  if(appShell)appShell.style.display="none";
+  showPasswordResetModal();
+
+  const emailEl=document.getElementById("passwordResetEmail");
+  const errorEl=document.getElementById("passwordResetError");
+  const form=document.getElementById("passwordResetForm");
+  const newInput=document.getElementById("newPasswordInput");
+  if(form)form.style.display="none";
+  if(errorEl){errorEl.textContent="Memeriksa link reset password...";errorEl.className="profile-photo-status";}
+
+  try{
+    const email=await firebaseAuth.verifyPasswordResetCode(oobCode);
+    if(emailEl)emailEl.textContent=email||"Akun GlassAccount";
+    if(errorEl){errorEl.textContent="";errorEl.className="profile-photo-status";}
+    if(form)form.style.display="block";
+    setTimeout(()=>newInput?.focus(),50);
+  }catch(err){
+    console.error("Verify password reset code:",err);
+    if(emailEl)emailEl.textContent="Link reset tidak valid";
+    if(errorEl){
+      const code=err?.code||"";
+      let msg="Link reset password tidak valid atau sudah kedaluwarsa.";
+      if(code==="auth/expired-action-code")msg="Link reset password sudah kedaluwarsa. Silakan minta link baru.";
+      if(code==="auth/invalid-action-code")msg="Link reset password tidak valid atau sudah pernah digunakan.";
+      if(code==="auth/user-disabled")msg="Akun ini dinonaktifkan.";
+      errorEl.textContent="❌ "+msg;
+      errorEl.className="profile-photo-status";
+    }
+  }
+  return true;
+}
+
+async function confirmNewPassword(event){
+  event?.preventDefault();event?.stopPropagation();
+  const {mode,oobCode}=getPasswordResetParams();
+  const newPassword=(document.getElementById("newPasswordInput")?.value||"");
+  const confirmPassword=(document.getElementById("confirmNewPasswordInput")?.value||"");
+  const btn=document.getElementById("confirmPasswordResetBtn");
+  const errorEl=document.getElementById("passwordResetError");
+  const setError=(text,ok=false)=>{if(errorEl){errorEl.textContent=text;errorEl.className="profile-photo-status "+(ok?"success":"");}};
+  if(mode!=="resetPassword" || !oobCode){setError("❌ Link reset password tidak ditemukan. Minta link reset baru.");return;}
+  if(newPassword.length<6){setError("❌ Password baru minimal 6 karakter.");return;}
+  if(newPassword!==confirmPassword){setError("❌ Konfirmasi password tidak sama.");return;}
+  if(btn){btn.disabled=true;btn.textContent="🔐 Menyimpan...";}
+  setError("Sedang menyimpan password baru...");
+  try{
+    await firebaseAuth.confirmPasswordReset(oobCode,newPassword);
+    const email=document.getElementById("passwordResetEmail")?.textContent||"";
+    setError("✅ Password berhasil diubah. Sekarang kamu bisa login dengan password baru.",true);
+    const form=document.getElementById("passwordResetForm");if(form)form.style.display="none";
+    window.history.replaceState({},document.title,window.location.pathname);
+    setTimeout(()=>{
+      closePasswordResetModal();
+      if(typeof showAuth==="function")showAuth();
+      const loginIdentifier=document.getElementById("loginIdentifier");
+      if(loginIdentifier && email.includes("@"))loginIdentifier.value=email;
+      const authMsg=document.getElementById("authMessage");
+      if(authMsg){authMsg.textContent="Password berhasil diubah. Silakan Sign In dengan password baru.";authMsg.style.color="var(--success)";}
+    },1200);
+  }catch(err){
+    console.error("Confirm password reset:",err);
+    const code=err?.code||"";
+    const messages={
+      "auth/expired-action-code":"Link reset sudah kedaluwarsa. Minta link baru.",
+      "auth/invalid-action-code":"Link reset tidak valid atau sudah digunakan.",
+      "auth/weak-password":"Password terlalu lemah. Gunakan minimal 6 karakter.",
+      "auth/user-disabled":"Akun ini dinonaktifkan.",
+      "auth/network-request-failed":"Koneksi ke Firebase gagal. Periksa internet."
+    };
+    setError("❌ "+(messages[code]||err?.message||"Password gagal diubah.")+(code?" ["+code+"]":""));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent="🔑 Simpan Password Baru";}
   }
 }
 
 window.openChangePasswordModal=openChangePasswordModal;
 window.closeChangePasswordModal=closeChangePasswordModal;
 window.sendPasswordResetVerification=sendPasswordResetVerification;
+window.closePasswordResetModal=closePasswordResetModal;
+window.confirmNewPassword=confirmNewPassword;
+window.handlePasswordResetFromEmail=handlePasswordResetFromEmail;
 
 async function saveProfilePhoto(file) {
   if (!currentUser || !file) return;
@@ -3915,6 +4048,7 @@ async function removeProfilePhoto(){
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
+  handlePasswordResetFromEmail().catch(err=>console.error("Password reset handler:",err));
   const btn=document.getElementById("profileButton");
   if(btn){btn.addEventListener("click",toggleProfileMenu);btn.addEventListener("keydown",e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleProfileMenu(e);}});}
   document.getElementById("profileDetailsModal")?.addEventListener("click",e=>{if(e.target.id==='profileDetailsModal')closeProfileDetails();});
