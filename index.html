@@ -3891,10 +3891,11 @@ async function sendPasswordResetVerification(){
   setStatus("Sedang membuat link reset password untuk "+email+"...");
   try{
     firebaseAuth.useDeviceLanguage();
-    const returnUrl=window.location.href.split("#")[0].split("?")[0];
-    const actionCodeSettings={url:returnUrl,handleCodeInApp:false};
-    await firebaseAuth.sendPasswordResetEmail(email,actionCodeSettings);
-    setStatus("✅ Link reset password sudah dikirim ke "+email+". Buka email tersebut, klik linknya, lalu buat password baru.",true);
+    // Gunakan alur reset password standar Firebase.
+    // Firebase akan membuat kode reset sekali pakai dan mengirimkannya
+    // melalui template Password reset yang aktif di Firebase Authentication.
+    await firebaseAuth.sendPasswordResetEmail(email);
+    setStatus("✅ Permintaan reset password berhasil dikirim ke "+email+". Cek Inbox, Spam, Promosi, dan Updates. Email ini berisi link resmi Firebase untuk membuat password baru.",true);
   }catch(err){
     console.error("Firebase password reset:",err);
     const code=err?.code||"";
