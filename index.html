@@ -150,6 +150,73 @@ button {
     box-shadow:0 10px 25px rgba(99,102,241,.25);
 }
 
+
+/* ===== COLLAPSIBLE GLASS SIDEBAR GROUPS ===== */
+.nav-group{
+    margin:10px 0;
+    padding:7px;
+    border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.10);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-radius:18px;
+    box-shadow:0 8px 28px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.nav-group-toggle{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:11px 12px;
+    border:0;
+    border-radius:13px;
+    background:rgba(255,255,255,.10);
+    color:var(--text);
+    cursor:pointer;
+    font:inherit;
+    font-weight:700;
+    text-align:left;
+    transition:.25s ease;
+}
+.nav-group-toggle:hover{
+    background:rgba(255,255,255,.20);
+    transform:translateY(-1px);
+}
+.nav-group-toggle .group-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.nav-group-toggle .group-icon{
+    width:30px;
+    height:30px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    background:rgba(255,255,255,.16);
+}
+.nav-group-toggle .group-arrow{
+    transition:transform .25s ease;
+    font-size:13px;
+    opacity:.8;
+}
+.nav-group.open .group-arrow{transform:rotate(180deg);}
+.nav-group-content{
+    display:grid;
+    grid-template-rows:0fr;
+    opacity:0;
+    transition:grid-template-rows .28s ease, opacity .2s ease;
+}
+.nav-group-content>div{overflow:hidden;min-height:0;padding-top:0;transition:padding-top .28s ease;}
+.nav-group.open .nav-group-content{grid-template-rows:1fr;opacity:1;}
+.nav-group.open .nav-group-content>div{padding-top:5px;}
+.nav-group-content .nav-item{margin:3px 0;}
+.nav-group-content .nav-title{display:none;}
+@media (max-width:700px){
+    .nav-group{margin:8px 0;}
+}
+
 .nav-icon {
     width:20px;
     text-align:center;
@@ -484,6 +551,74 @@ select:focus {
 .search {
     flex:1;
     min-width:180px;
+}
+
+/* Glass selector - Belajar Akuntansi */
+.learning-topic-picker label{
+    display:block;
+    margin-bottom:9px;
+    font-weight:700;
+}
+.glass-select-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    width:100%;
+}
+.glass-select{
+    width:100%;
+    min-height:48px;
+    padding:12px 48px 12px 46px !important;
+    border:1px solid rgba(255,255,255,.34) !important;
+    border-radius:16px !important;
+    color:var(--text) !important;
+    background:rgba(255,255,255,.20) !important;
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    box-shadow:0 10px 30px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.28);
+    appearance:none;
+    -webkit-appearance:none;
+    cursor:pointer;
+    transition:.2s ease;
+}
+.glass-select:hover{
+    background:rgba(255,255,255,.30) !important;
+    transform:translateY(-1px);
+}
+.glass-select:focus{
+    border-color:var(--primary) !important;
+    box-shadow:0 0 0 3px rgba(99,102,241,.16), 0 10px 30px rgba(15,23,42,.10);
+}
+.glass-select option{
+    background:#fff;
+    color:#172033;
+}
+.glass-select-icon{
+    position:absolute;
+    left:15px;
+    z-index:2;
+    pointer-events:none;
+    font-size:18px;
+}
+.glass-select-arrow{
+    position:absolute;
+    right:17px;
+    z-index:2;
+    pointer-events:none;
+    font-size:22px;
+    line-height:1;
+    opacity:.75;
+}
+body.dark .glass-select{
+    background:rgba(15,23,42,.52) !important;
+    border-color:rgba(148,163,184,.25) !important;
+}
+body.dark .glass-select:hover{
+    background:rgba(30,41,59,.68) !important;
+}
+body.dark .glass-select option{
+    background:#0f172a;
+    color:#f8fafc;
 }
 
 .btn {
@@ -889,6 +1024,8 @@ tr:hover td {
 }
 
 @media(max-width:700px) {
+
+.tools-mode .period-bar { display: none !important; }
 
     .period-bar {
         align-items:flex-start;
@@ -1432,88 +1569,82 @@ tr:hover td {
 
     </div>
 
-    <div class="nav-title">Menu Utama</div>
+    <button class="nav-item" data-page="dashboard"><span class="nav-icon">⌂</span>Dashboard</button>
 
-    <button class="nav-item active" data-page="dashboard">
-        <span class="nav-icon">⌂</span>
-        Dashboard
-    </button>
+    <div class="nav-group" data-nav-group="recording">
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
+            <span class="group-left"><span class="group-icon">📝</span><span>Pencatatan</span></span>
+            <span class="group-arrow">⌄</span>
+        </button>
+        <div class="nav-group-content"><div>
+            <button class="nav-item" data-page="transactions"><span class="nav-icon">↔</span>Transaksi</button>
+            <button class="nav-item" data-page="journal"><span class="nav-icon">▤</span>Jurnal Umum</button>
+            <button class="nav-item" data-page="ledger"><span class="nav-icon">▥</span>Buku Besar</button>
+        </div></div>
+    </div>
 
-    <button class="nav-item" data-page="transactions">
-        <span class="nav-icon">↔</span>
-        Transaksi
-    </button>
+    <div class="nav-group" data-nav-group="summarizing">
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
+            <span class="group-left"><span class="group-icon">📚</span><span>Pengikhtisaran</span></span>
+            <span class="group-arrow">⌄</span>
+        </button>
+        <div class="nav-group-content"><div>
+            <button class="nav-item" data-page="trial"><span class="nav-icon">⚖</span>Neraca Saldo</button>
+            <button class="nav-item" data-page="adjustment"><span class="nav-icon">🛠</span>Jurnal Penyesuaian</button>
+            <button class="nav-item" data-page="worksheet"><span class="nav-icon">📋</span>Kertas Kerja (Neraca Lajur)</button>
+        </div></div>
+    </div>
 
-    <button class="nav-item" data-page="journal">
-        <span class="nav-icon">▤</span>
-        Jurnal Umum
-    </button>
+    <div class="nav-group" data-nav-group="reporting">
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
+            <span class="group-left"><span class="group-icon">📊</span><span>Pelaporan</span></span>
+            <span class="group-arrow">⌄</span>
+        </button>
+        <div class="nav-group-content"><div>
+            <button class="nav-item" data-page="income"><span class="nav-icon">📈</span>Laporan Laba/Rugi</button>
+            <button class="nav-item" data-page="equity"><span class="nav-icon">💼</span>Laporan Perubahan Modal</button>
+            <button class="nav-item" data-page="balance"><span class="nav-icon">⚖</span>Neraca</button>
+            <button class="nav-item" data-page="cash"><span class="nav-icon">💰</span>Laporan Arus Kas</button>
+        </div></div>
+    </div>
 
-    <button class="nav-item" data-page="closing">
-        <span class="nav-icon">✓</span>
-        Jurnal Penutup
-    </button>
+    <div class="nav-group" data-nav-group="closing-process">
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
+            <span class="group-left"><span class="group-icon">🔒</span><span>Penutupan</span></span>
+            <span class="group-arrow">⌄</span>
+        </button>
+        <div class="nav-group-content"><div>
+            <button class="nav-item" data-page="closing"><span class="nav-icon">✓</span>Jurnal Penutup</button>
+            <button class="nav-item" data-page="postClosing"><span class="nav-icon">📑</span>Neraca Saldo Setelah Penutupan</button>
+            <button class="nav-item" data-page="reversing"><span class="nav-icon">↩</span>Jurnal Pembalik</button>
+        </div></div>
+    </div>
 
-    <button class="nav-item" data-page="ledger">
-        <span class="nav-icon">▥</span>
-        Buku Besar
-    </button>
+    <div class="nav-group" data-nav-group="data">
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
+            <span class="group-left"><span class="group-icon">🗂️</span><span>Data</span></span>
+            <span class="group-arrow">⌄</span>
+        </button>
+        <div class="nav-group-content"><div>
+            <button class="nav-item" data-page="products"><span class="nav-icon">📦</span>Produk</button>
+            <button class="nav-item" data-page="customers"><span class="nav-icon">👥</span>Pelanggan</button>
+            <button class="nav-item" data-page="suppliers"><span class="nav-icon">🏢</span>Pemasok</button>
+            <button class="nav-item" type="button" onclick="openImportModal()"><span class="nav-icon">📥</span>Impor File</button>
+        </div></div>
+    </div>
 
-    <div class="nav-title">Laporan</div>
-
-    <button class="nav-item" data-page="income">
-        <span class="nav-icon">📈</span>
-        Laba Rugi
-    </button>
-
-    <button class="nav-item" data-page="balance">
-        <span class="nav-icon">⚖</span>
-        Neraca
-    </button>
-
-    <button class="nav-item" data-page="cash">
-        <span class="nav-icon">💰</span>
-        Kas & Bank
-    </button>
-
-    <div class="nav-title">Data</div>
-
-    <button class="nav-item" data-page="products">
-        <span class="nav-icon">📦</span>
-        Produk
-    </button>
-
-    <button class="nav-item" data-page="customers">
-        <span class="nav-icon">👥</span>
-        Pelanggan
-    </button>
-
-    <button class="nav-item" data-page="suppliers">
-        <span class="nav-icon">🏢</span>
-        Pemasok
-    </button>
-
-    <button class="nav-item" type="button" onclick="openImportModal()">
-        <span class="nav-icon">📥</span>
-        Impor File
-    </button>
-
-    <div class="nav-title">Tools</div>
-
-    <button class="nav-item" data-page="accountingCalculator">
-        <span class="nav-icon">🧮</span>
-        Kalkulator Akuntansi
-    </button>
-
-    <button class="nav-item" data-page="learnAccounting">
-        <span class="nav-icon">📚</span>
-        Belajar Akuntansi
-    </button>
-
-    <button class="nav-item" data-page="calculator">
-        <span class="nav-icon">🧮</span>
-        HPP & BEP
-    </button>
+    <div class="nav-group" data-nav-group="tools">
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
+            <span class="group-left"><span class="group-icon">🛠️</span><span>Tools</span></span>
+            <span class="group-arrow">⌄</span>
+        </button>
+        <div class="nav-group-content"><div>
+            <button class="nav-item" data-page="accountingCalculator"><span class="nav-icon">🧮</span>Kalkulator Akuntansi</button>
+            <button class="nav-item" data-page="learnAccounting"><span class="nav-icon">📚</span>Belajar Akuntansi</button>
+            <button class="nav-item" data-page="calculator"><span class="nav-icon">🧮</span>HPP &amp; BEP</button>
+            <button class="nav-item" data-page="profile"><span class="nav-icon">👤</span>Profil</button>
+        </div></div>
+    </div>
 
 </aside>
 
@@ -1635,6 +1766,41 @@ tr:hover td {
 
 
 <!-- ================= DASHBOARD ================= -->
+
+<section class="page" id="profile">
+  <div class="card glass" style="max-width:1100px;margin:0 auto">
+    <div class="card-header">
+      <div><h3>👤 Profil Akun</h3><span>Kelola akun dan pengaturan aplikasi.</span></div>
+    </div>
+    <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;gap:18px">
+      <div class="glass" style="padding:20px">
+        <h3>Informasi Akun</h3>
+        <div style="display:grid;gap:14px;margin-top:16px">
+          <div><small>Username</small><strong id="profilePageUsername" style="display:block">-</strong></div>
+          <div><small>Email</small><strong id="profilePageEmail" style="display:block">-</strong></div>
+          <div><small>Status</small><strong style="display:block">● Aktif</strong></div>
+          <div><small>Password</small><strong style="display:block;letter-spacing:3px">••••••••</strong></div>
+          <button class="btn" type="button" onclick="openChangePassword()">🔐 Ganti Password</button>
+        </div>
+      </div>
+      <div class="glass" style="padding:20px">
+        <h3>⚙️ Pengaturan</h3>
+        <p style="color:var(--muted)">Pengaturan yang dipilih berlaku untuk seluruh tampilan web.</p>
+        <label for="profileCurrencySelect">Mata Uang</label>
+        <select id="profileCurrencySelect" class="glass" style="width:100%;padding:12px;margin-top:8px" onchange="changeGlobalCurrency(this.value)">
+          <option value="IDR">🇮🇩 Rupiah Indonesia (IDR)</option>
+          <option value="USD">🇺🇸 US Dollar (USD)</option>
+          <option value="EUR">🇪🇺 Euro (EUR)</option>
+          <option value="GBP">🇬🇧 Pound Sterling (GBP)</option>
+          <option value="JPY">🇯🇵 Yen Jepang (JPY)</option>
+          <option value="CNY">🇨🇳 Yuan Tiongkok (CNY)</option>
+          <option value="SGD">🇸🇬 Dollar Singapura (SGD)</option>
+          <option value="MYR">🇲🇾 Ringgit Malaysia (MYR)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="page active" id="dashboard">
 
@@ -2733,6 +2899,64 @@ tr:hover td {
 </section>
 
 
+<section class="page" id="trial">
+  <div class="card glass table-card">
+    <div class="card-header"><div><h3>⚖️ Neraca Saldo</h3><span id="trialPeriod">Periode: -</span></div><button class="btn secondary" type="button" onclick="renderTrialBalance()">↻ Perbarui</button></div>
+    <div class="glass" style="padding:14px;margin-bottom:16px;line-height:1.7"><b>Aturan akuntansi:</b> Neraca Saldo berisi saldo akun dari Buku Besar <b>sebelum penyesuaian</b>. Total Debit harus sama dengan Total Kredit. Neraca Saldo tidak menjamin semua kesalahan pencatatan terdeteksi.</div>
+    <div class="table-wrap"><table><thead><tr><th>Akun</th><th>Debit</th><th>Kredit</th><th>Saldo Normal</th></tr></thead><tbody id="trialBalanceTable"></tbody><tfoot><tr><th>Total</th><th id="trialDebitTotal">Rp0</th><th id="trialCreditTotal">Rp0</th><th id="trialStatus">—</th></tr></tfoot></table></div>
+  </div>
+</section>
+
+<section class="page" id="adjustment">
+  <div class="card glass table-card">
+    <div class="card-header"><div><h3>🛠️ Jurnal Penyesuaian</h3><span>Dicatat pada akhir periode untuk menerapkan basis akrual dan mencerminkan saldo yang sebenarnya.</span></div></div>
+    <div class="glass" style="padding:14px;margin-bottom:16px;line-height:1.7"><b>Contoh yang sah:</b> beban dibayar di muka yang telah terpakai, penyusutan, pendapatan yang masih harus diterima, dan beban yang masih harus dibayar. Setiap ayat harus memenuhi <b>Debit = Kredit</b>.</div>
+    <form id="adjustmentForm" class="form-grid" onsubmit="saveAdjustment(event)">
+      <div class="form-group"><label>Tanggal</label><input id="adjustmentDate" type="date" required></div>
+      <div class="form-group"><label>Nominal</label><input id="adjustmentAmount" type="number" min="1" step="1" required placeholder="0"></div>
+      <div class="form-group"><label>Akun Debit</label><input id="adjustmentDebit" list="accountSuggestions" required placeholder="Contoh: Beban Penyusutan"></div>
+      <div class="form-group"><label>Akun Kredit</label><input id="adjustmentCredit" list="accountSuggestions" required placeholder="Contoh: Akumulasi Penyusutan"></div>
+      <div class="form-group full"><label>Keterangan</label><input id="adjustmentDescription" type="text" required placeholder="Contoh: Penyesuaian penyusutan bulan berjalan"></div>
+      <div class="modal-footer" style="grid-column:1/-1"><button class="btn secondary" type="button" onclick="resetAdjustmentForm()">Reset</button><button class="btn" type="submit">+ Simpan Penyesuaian</button></div>
+    </form>
+    <datalist id="accountSuggestions"><option value="Kas / Bank"><option value="Piutang"><option value="Persediaan"><option value="Peralatan"><option value="Beban Dibayar di Muka"><option value="Akumulasi Penyusutan"><option value="Utang"><option value="Utang Beban"><option value="Pendapatan Diterima di Muka"><option value="Modal"><option value="Pendapatan"><option value="Penjualan"><option value="Beban Gaji"><option value="Beban Sewa"><option value="Beban Operasional"><option value="Beban Penyusutan"></datalist>
+    <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>Nominal</th><th>Aksi</th></tr></thead><tbody id="adjustmentTable"></tbody></table></div>
+  </div>
+</section>
+
+<section class="page" id="worksheet">
+  <div class="card glass table-card">
+    <div class="card-header"><div><h3>📋 Kertas Kerja (Neraca Lajur)</h3><span id="worksheetPeriod">Periode: -</span></div><button class="btn secondary" type="button" onclick="renderWorksheet()">↻ Perbarui</button></div>
+    <div class="glass" style="padding:14px;margin-bottom:16px;line-height:1.7">Kertas kerja menghubungkan <b>Neraca Saldo → Penyesuaian → Neraca Saldo Disesuaikan → Laba/Rugi → Neraca</b>. Kolom Laba/Rugi hanya memuat akun nominal, sedangkan kolom Neraca memuat akun permanen.</div>
+    <div class="table-wrap"><table style="min-width:1100px"><thead><tr><th rowspan="2">Akun</th><th colspan="2">Neraca Saldo</th><th colspan="2">Penyesuaian</th><th colspan="2">NS Disesuaikan</th><th colspan="2">Laba/Rugi</th><th colspan="2">Neraca</th></tr><tr><th>D</th><th>K</th><th>D</th><th>K</th><th>D</th><th>K</th><th>D</th><th>K</th><th>D</th><th>K</th></tr></thead><tbody id="worksheetTable"></tbody><tfoot><tr><th>Total</th><th id="wsTbD">Rp0</th><th id="wsTbK">Rp0</th><th id="wsAdD">Rp0</th><th id="wsAdK">Rp0</th><th id="wsAdjD">Rp0</th><th id="wsAdjK">Rp0</th><th id="wsIsD">Rp0</th><th id="wsIsK">Rp0</th><th id="wsBsD">Rp0</th><th id="wsBsK">Rp0</th></tr></tfoot></table></div>
+    <div id="worksheetStatus" class="glass" style="padding:14px;margin-top:16px"></div>
+  </div>
+</section>
+
+<section class="page" id="equity">
+  <div class="card glass table-card">
+    <div class="card-header"><div><h3>💼 Laporan Perubahan Modal</h3><span id="equityPeriod">Periode: -</span></div><button class="btn secondary" type="button" onclick="renderEquityStatement()">↻ Perbarui</button></div>
+    <div class="glass" style="padding:14px;margin-bottom:16px;line-height:1.7"><b>Hukum akuntansi:</b> Modal Akhir = Modal Awal + Investasi Tambahan + Laba Bersih − Prive/Dividen. Laba bersih berasal dari pendapatan dikurangi beban setelah penyesuaian.</div>
+    <div class="table-wrap"><table><thead><tr><th>Komponen</th><th>Jumlah</th></tr></thead><tbody id="equityStatementTable"></tbody><tfoot><tr><th>Modal Akhir</th><th id="equityEndingTotal">Rp0</th></tr></tfoot></table></div>
+  </div>
+</section>
+
+<section class="page" id="postClosing">
+  <div class="card glass table-card">
+    <div class="card-header"><div><h3>📑 Neraca Saldo Setelah Penutupan</h3><span id="postClosingPeriod">Periode: -</span></div><button class="btn secondary" type="button" onclick="renderPostClosing()">↻ Perbarui</button></div>
+    <div class="glass" style="padding:14px;margin-bottom:16px;line-height:1.7"><b>Aturan:</b> hanya akun permanen yang tersisa setelah jurnal penutup: aset, liabilitas, dan ekuitas. Pendapatan, beban, ikhtisar laba/rugi, prive, dan dividen harus bersaldo nol setelah penutupan.</div>
+    <div class="table-wrap"><table><thead><tr><th>Akun</th><th>Debit</th><th>Kredit</th><th>Saldo Normal</th></tr></thead><tbody id="postClosingTable"></tbody><tfoot><tr><th>Total</th><th id="postClosingDebitTotal">Rp0</th><th id="postClosingCreditTotal">Rp0</th><th id="postClosingStatus">—</th></tr></tfoot></table></div>
+  </div>
+</section>
+
+<section class="page" id="reversing">
+  <div class="card glass table-card">
+    <div class="card-header"><div><h3>↩️ Jurnal Pembalik</h3><span id="reversingPeriod">Awal periode berikutnya</span></div><button class="btn secondary" type="button" onclick="renderReversingJournal()">↻ Perbarui</button></div>
+    <div class="glass" style="padding:14px;margin-bottom:16px;line-height:1.7"><b>Aturan:</b> jurnal pembalik bersifat opsional dan biasanya digunakan untuk membalik penyesuaian akrual tertentu, seperti beban yang masih harus dibayar dan pendapatan yang masih harus diterima. Penyesuaian penyusutan dan beban dibayar di muka umumnya tidak dibalik.</div>
+    <div class="table-wrap"><table><thead><tr><th>Tanggal Pembalik</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>Aksi</th></tr></thead><tbody id="reversingTable"></tbody></table></div>
+  </div>
+</section>
+
 <section class="page" id="learnAccounting">
     <div class="card glass">
         <div class="card-header">
@@ -2742,9 +2966,11 @@ tr:hover td {
             </div>
         </div>
 
-        <div class="form-group" style="margin-bottom:20px;">
-            <label for="learningTopic">Pilih materi</label>
-            <select id="learningTopic" onchange="showAccountingLesson(this.value)">
+        <div class="form-group learning-topic-picker" style="margin-bottom:20px;">
+            <label for="learningTopic">🔎 Pilih materi akuntansi</label>
+            <div class="glass-select-wrap">
+                <span class="glass-select-icon">📚</span>
+                <select id="learningTopic" class="glass-select" onchange="showAccountingLesson(this.value)">
                 <option value="journal">1. Jurnal Umum</option>
                 <option value="ledger">2. Buku Besar</option>
                 <option value="trial">3. Neraca Saldo</option>
@@ -2757,7 +2983,9 @@ tr:hover td {
                 <option value="hpp">10. HPP</option>
                 <option value="bep">11. BEP</option>
                 <option value="equation">12. Persamaan Akuntansi</option>
-            </select>
+                </select>
+                <span class="glass-select-arrow">⌄</span>
+            </div>
         </div>
 
         <div id="accountingLesson" class="glass" style="padding:22px;line-height:1.75;"></div>
@@ -3417,7 +3645,7 @@ async function saveNewUserData(user, username) {
       new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 3000))
     ]);
     await Promise.race([
-      db.ref("users/" + user.uid + "/data").set({transactions:[], products:[], customers:[], suppliers:[]}),
+      db.ref("users/" + user.uid + "/data").set({transactions:[], products:[], customers:[], suppliers:[], adjustments:[], reversingEntries:[]}),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 3000))
     ]);
     await Promise.race([
@@ -3568,6 +3796,27 @@ function getUserDataRef() {
     return currentUser ? db.ref("users/" + currentUser.id + "/data") : null;
 }
 
+async function loadFirebaseData(){
+    if(!currentUser) return;
+    const ref=getUserDataRef();
+    if(!ref) return;
+    try{
+        const snap=await ref.once("value");
+        const data=snap.val() || {};
+        transactions=Array.isArray(data.transactions) ? data.transactions : [];
+        products=Array.isArray(data.products) ? data.products : [];
+        customers=Array.isArray(data.customers) ? data.customers : [];
+        suppliers=Array.isArray(data.suppliers) ? data.suppliers : [];
+        adjustments=Array.isArray(data.adjustments) ? data.adjustments : [];
+        reversingEntries=Array.isArray(data.reversingEntries) ? data.reversingEntries : [];
+        capitalEntries=Array.isArray(data.capitalEntries) ? data.capitalEntries : capitalEntries;
+        drawingEntries=Array.isArray(data.drawingEntries) ? data.drawingEntries : drawingEntries;
+        refreshEverything();
+    }catch(error){
+        console.error("Gagal memuat data Firebase:",error);
+    }
+}
+
 async function saveMasterData(type, value) {
     const ref = getUserDataRef();
     if(!ref) return;
@@ -3651,6 +3900,7 @@ const defaultTransactions = [
 
 
 let transactions = [];
+let reversingEntries = [];
 
 
 /* =====================================================
@@ -3937,6 +4187,10 @@ async function saveData() {
             products: Array.isArray(products) ? products : [],
             customers: Array.isArray(customers) ? customers : [],
             suppliers: Array.isArray(suppliers) ? suppliers : [],
+            adjustments: Array.isArray(adjustments) ? adjustments : [],
+            reversingEntries: Array.isArray(reversingEntries) ? reversingEntries : [],
+            capitalEntries: Array.isArray(capitalEntries) ? capitalEntries : [],
+            drawingEntries: Array.isArray(drawingEntries) ? drawingEntries : [],
             updatedAt: firebase.database.ServerValue.TIMESTAMP
         });
     } catch(error) {
@@ -4092,6 +4346,14 @@ function logoutGlassAccount(event){
 }
 window.logoutGlassAccount=logoutGlassAccount;
 
+function toggleNavGroup(button){
+    const group=button.closest('.nav-group');
+    if(!group) return;
+    const isOpen=group.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
+}
+window.toggleNavGroup=toggleNavGroup;
+
 /* =====================================================
    NAVIGATION
 ===================================================== */
@@ -4110,6 +4372,11 @@ const titles = {
         "Pantau kondisi keuangan bisnis lo."
     ],
 
+    profile:[
+        "Profil Akun",
+        "Kelola informasi akun dan pengaturan aplikasi."
+    ],
+
     transactions:[
         "Transaksi",
         "Kelola pemasukan dan pengeluaran."
@@ -4118,6 +4385,36 @@ const titles = {
     journal:[
         "Jurnal Umum",
         "Catatan debit dan kredit."
+    ],
+
+    trial:[
+        "Neraca Saldo",
+        "Pengikhtisaran saldo akun untuk memeriksa keseimbangan debit dan kredit."
+    ],
+
+    adjustment:[
+        "Jurnal Penyesuaian",
+        "Pencatatan penyesuaian pada akhir periode."
+    ],
+
+    worksheet:[
+        "Kertas Kerja (Neraca Lajur)",
+        "Pengikhtisaran data sebelum penyusunan laporan keuangan."
+    ],
+
+    equity:[
+        "Laporan Perubahan Modal",
+        "Perubahan modal selama satu periode akuntansi."
+    ],
+
+    postClosing:[
+        "Neraca Saldo Setelah Penutupan",
+        "Daftar saldo akun setelah jurnal penutup."
+    ],
+
+    reversing:[
+        "Jurnal Pembalik",
+        "Jurnal pembalik untuk awal periode berikutnya."
     ],
 
     closing:[
@@ -4212,6 +4509,13 @@ navItems.forEach(item => {
             .getElementById(page)
             .classList.add("active");
 
+
+        // Hilangkan baris "Periode Aktif" khusus halaman Tools.
+        // Halaman laporan/transaksi tetap menggunakan periode aktif.
+        document.body.classList.toggle(
+            "tools-mode",
+            ["accountingCalculator", "learnAccounting", "calculator"].includes(page)
+        );
 
         document
             .getElementById("pageTitle")
@@ -4968,6 +5272,109 @@ function deleteTransaction(id) {
 
 
 /* =====================================================
+   PENGIKHTISARAN & PENYESUAIAN — MESIN AKUNTANSI
+===================================================== */
+function baseJournalRows(data=getPeriodTransactions()){
+  const rows=[];
+  data.forEach(t=>{
+    const amount=Number(t.amount||0); if(amount<=0) return;
+    if(t.type==='capital'){
+      const inc=t.equityType!=='pengurangan';
+      rows.push({date:t.date,account:inc?'Kas / Bank':'Modal',description:t.description,debit:inc?amount:0,credit:inc?0:amount,source:'transaksi'});
+      rows.push({date:t.date,account:inc?'Modal':'Kas / Bank',description:t.description,debit:inc?0:amount,credit:inc?amount:0,source:'transaksi'});
+    }else if(t.type==='drawing'){
+      const account=t.category==='Dividen'?'Dividen':'Prive';
+      rows.push({date:t.date,account,description:t.description,debit:amount,credit:0,source:'transaksi'});
+      rows.push({date:t.date,account:'Kas / Bank',description:t.description,debit:0,credit:amount,source:'transaksi'});
+    }else if(t.type==='income'){
+      rows.push({date:t.date,account:'Kas / Bank',description:t.description,debit:amount,credit:0,source:'transaksi'});
+      rows.push({date:t.date,account:t.category||'Pendapatan',description:t.description,debit:0,credit:amount,source:'transaksi'});
+    }else if(t.type==='expense'){
+      rows.push({date:t.date,account:t.category||'Beban',description:t.description,debit:amount,credit:0,source:'transaksi'});
+      rows.push({date:t.date,account:'Kas / Bank',description:t.description,debit:0,credit:amount,source:'transaksi'});
+    }
+  });
+  reversingEntries.filter(r => { if(allPeriods) return true; const d=new Date(r.date+'T00:00:00'); return d.getMonth()===selectedMonth && d.getFullYear()===selectedYear; }).forEach(r=>{
+    const amount=Number(r.amount||0);
+    if(amount>0){
+      rows.push({date:r.date,account:r.debitAccount,description:r.description,debit:amount,credit:0,source:'pembalik'});
+      rows.push({date:r.date,account:r.creditAccount,description:r.description,debit:0,credit:amount,source:'pembalik'});
+    }
+  });
+  return rows;
+}
+function adjustmentRows(data=getPeriodTransactions()){
+  const dates=new Set(data.map(t=>t.date));
+  return adjustments.filter(a=>allPeriods || dates.has(a.date)).flatMap(a=>[
+    {date:a.date,account:a.debitAccount,description:a.description,debit:Number(a.amount),credit:0,source:'penyesuaian',id:a.id},
+    {date:a.date,account:a.creditAccount,description:a.description,debit:0,credit:Number(a.amount),source:'penyesuaian',id:a.id}
+  ]);
+}
+function buildAccountMap(rows){
+  const map={};
+  rows.forEach(r=>{
+    if(!map[r.account]) map[r.account]={debit:0,credit:0};
+    map[r.account].debit+=Number(r.debit||0); map[r.account].credit+=Number(r.credit||0);
+  });
+  return map;
+}
+function normalSide(account){
+  const a=String(account||'').toLowerCase();
+  if(/akumulasi penyusutan|utang|liabilitas|pendapatan diterima di muka|modal|ekuitas|pendapatan|penjualan/.test(a)) return 'credit';
+  return 'debit';
+}
+function accountBalance(row){return Math.abs(Number(row.debit||0)-Number(row.credit||0));}
+function accountType(account){
+  const a=String(account||'').toLowerCase();
+  if(/pendapatan|penjualan/.test(a) && !/pendapatan diterima di muka/.test(a)) return 'income';
+  if(/beban|hpp|prive|dividen/.test(a) && !/beban dibayar di muka/.test(a)) return 'income';
+  return 'balance';
+}
+function resetAdjustmentForm(){
+  const f=document.getElementById('adjustmentForm'); if(f) f.reset();
+  const d=document.getElementById('adjustmentDate'); if(d) d.value=todayISO();
+}
+async function saveAdjustment(e){
+  e.preventDefault();
+  if(!currentUser) return alert('Silakan login terlebih dahulu.');
+  const amount=Number(document.getElementById('adjustmentAmount').value||0);
+  const debit=document.getElementById('adjustmentDebit').value.trim();
+  const credit=document.getElementById('adjustmentCredit').value.trim();
+  const date=document.getElementById('adjustmentDate').value||todayISO();
+  const description=document.getElementById('adjustmentDescription').value.trim();
+  if(amount<=0 || !debit || !credit || !description) return alert('Lengkapi semua data penyesuaian.');
+  if(debit.toLowerCase()===credit.toLowerCase()) return alert('Akun debit dan kredit tidak boleh sama.');
+  adjustments.push({id:uid('adj_'),date,debitAccount:debit,creditAccount:credit,amount,description});
+  await saveData();
+  resetAdjustmentForm(); renderAdjustments(); refreshEverything();
+}
+async function deleteAdjustment(id){
+  if(!confirm('Hapus jurnal penyesuaian ini?')) return;
+  adjustments=adjustments.filter(a=>a.id!==id); await saveData(); renderAdjustments(); refreshEverything();
+}
+function renderAdjustments(){
+  const tbody=document.getElementById('adjustmentTable'); if(!tbody) return;
+  const data=adjustmentRows();
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada jurnal penyesuaian pada periode ini.</div></td></tr>';return;}
+  const grouped={};
+  data.forEach(r=>{grouped[r.id]??=[];grouped[r.id].push(r);});
+  tbody.innerHTML=Object.values(grouped).map(g=>`<tr><td>${escapeHTML(g[0].date)}</td><td>${escapeHTML(g[0].description)}</td><td>${escapeHTML(g[0].account)}</td><td>${escapeHTML(g[1].account)}</td><td>${formatRupiah(g[0].debit||g[1].credit)}</td><td><button class="mini-btn delete" type="button" onclick="deleteAdjustment('${g[0].id}')">🗑️</button></td></tr>`).join('');
+}
+function renderTrialBalance(){
+  const map=buildAccountMap(baseJournalRows()); const tbody=document.getElementById('trialBalanceTable'); if(!tbody)return;
+  const names=Object.keys(map).sort(); let td=0,tk=0;
+  tbody.innerHTML=names.map(n=>{const r=map[n],bal=accountBalance(r),side=normalSide(n),d=side==='debit'?bal:0,k=side==='credit'?bal:0;td+=d;tk+=k;return `<tr><td><b>${escapeHTML(n)}</b></td><td>${d?formatRupiah(d):'—'}</td><td>${k?formatRupiah(k):'—'}</td><td>${side==='debit'?'Debit':'Kredit'}</td></tr>`}).join('')||'<tr><td colspan="4"><div class="empty">Belum ada saldo akun.</div></td></tr>';
+  document.getElementById('trialDebitTotal').textContent=formatRupiah(td); document.getElementById('trialCreditTotal').textContent=formatRupiah(tk); document.getElementById('trialStatus').textContent=Math.abs(td-tk)<0.005?'✅ Seimbang':'⚠️ Selisih '+formatRupiah(Math.abs(td-tk)); document.getElementById('trialPeriod').textContent='Periode: '+getPeriodText();
+}
+function renderWorksheet(){
+  const tb=buildAccountMap(baseJournalRows()), ad=buildAccountMap(adjustmentRows()), names=[...new Set([...Object.keys(tb),...Object.keys(ad)])].sort(); const tbody=document.getElementById('worksheetTable'); if(!tbody)return;
+  let sums=[0,0,0,0,0,0,0,0,0,0];
+  tbody.innerHTML=names.map(n=>{const t=tb[n]||{debit:0,credit:0},a=ad[n]||{debit:0,credit:0};const tbD=t.debit,tbK=t.credit,adD=a.debit,adK=a.credit,netD=tbD+adD,netK=tbK+adK;const bal=accountBalance({debit:netD,credit:netK}),side=normalSide(n);const adjD=side==='debit'?bal:0,adjK=side==='credit'?bal:0;const is=accountType(n)==='income';const isD=is&&side==='debit'?bal:0,isK=is&&side==='credit'?bal:0,bsD=!is&&side==='debit'?bal:0,bsK=!is&&side==='credit'?bal:0;const vals=[tbD,tbK,adD,adK,adjD,adjK,isD,isK,bsD,bsK];vals.forEach((v,i)=>sums[i]+=v);return `<tr><td><b>${escapeHTML(n)}</b></td>${vals.map(v=>`<td>${v?formatRupiah(v):'—'}</td>`).join('')}</tr>`}).join('')||'<tr><td colspan="11"><div class="empty">Belum ada data untuk kertas kerja.</div></td></tr>';
+  ['wsTbD','wsTbK','wsAdD','wsAdK','wsAdjD','wsAdjK','wsIsD','wsIsK','wsBsD','wsBsK'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=formatRupiah(sums[i]);});
+  const diff=Math.abs(sums[4]-sums[5]); document.getElementById('worksheetStatus').innerHTML=diff<0.005?'✅ <b>Kertas kerja seimbang.</b> Total Neraca Saldo Disesuaikan Debit = Kredit.':'⚠️ <b>Kertas kerja belum seimbang.</b> Selisih '+formatRupiah(diff)+' — periksa jurnal dan penyesuaian.'; document.getElementById('worksheetPeriod').textContent='Periode: '+getPeriodText();
+}
+
+/* =====================================================
    JOURNAL
 ===================================================== */
 
@@ -4977,8 +5384,9 @@ function renderJournal() {
 
     document.getElementById("journalPeriod").textContent = `Periode: ${getPeriodText()}`;
     const data = getPeriodTransactions();
+    const adjustmentData = adjustmentRows(data);
 
-    if(data.length === 0) {
+    if(data.length === 0 && adjustmentData.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5"><div class="empty">📖 Belum ada jurnal pada periode ini.</div></td></tr>`;
         return;
     }
@@ -5000,8 +5408,84 @@ function renderJournal() {
             rows.push({date:t.date,account:income?t.category:'Kas / Bank',desc:t.description,debit:income?0:amount,credit:income?amount:0});
         }
     });
+    adjustmentData.forEach(r=>rows.push(r));
 
     tbody.innerHTML=rows.map(r=>`<tr><td>${escapeHTML(r.date)}</td><td>${escapeHTML(r.account)}</td><td>${escapeHTML(r.desc)}</td><td>${r.debit?formatRupiah(r.debit):'-'}</td><td>${r.credit?formatRupiah(r.credit):'-'}</td></tr>`).join('');
+}
+
+/* =====================================================
+   LAPORAN PERUBAHAN MODAL, POST-CLOSING & PEMBALIK
+===================================================== */
+function adjustedAccountMap(){
+  const rows=baseJournalRows(getPeriodTransactions()).concat(adjustmentRows(getPeriodTransactions()));
+  return buildAccountMap(rows);
+}
+function adjustedProfit(){
+  const map=adjustedAccountMap(); let revenue=0, expense=0;
+  Object.entries(map).forEach(([a,r])=>{
+    const low=String(a||'').toLowerCase();
+    if(/prive|dividen/.test(low)) return;
+    const type=accountType(a), bal=accountBalance(r), side=normalSide(a);
+    if(type==='income' && side==='credit') revenue += bal;
+    if(type==='income' && side==='debit') expense += bal;
+  });
+  return {revenue,expense,profit:revenue-expense};
+}
+function periodCapitalMovement(){
+  const data=getPeriodTransactions();
+  let investment=0, drawing=0;
+  data.forEach(t=>{
+    const amount=Number(t.amount||0);
+    if(t.type==='capital' && t.equityType!=='pengurangan') investment+=amount;
+    if(t.type==='capital' && t.equityType==='pengurangan') drawing+=amount;
+    if(t.type==='drawing') drawing+=amount;
+  });
+  return {investment,drawing};
+}
+function renderEquityStatement(){
+  const body=document.getElementById('equityStatementTable'); if(!body)return;
+  const p=adjustedProfit(), m=periodCapitalMovement();
+  const opening=Math.max(0,(window.__equityOpening||0));
+  const ending=opening+m.investment+p.profit-m.drawing;
+  document.getElementById('equityPeriod').textContent='Periode: '+getPeriodText();
+  document.getElementById('equityEndingTotal').textContent=formatRupiah(ending);
+  body.innerHTML=`<tr><td>Modal Awal</td><td>${formatRupiah(opening)}</td></tr><tr><td>Investasi/Setoran Modal Tambahan</td><td>${formatRupiah(m.investment)}</td></tr><tr><td>Laba / (Rugi) Bersih</td><td>${formatRupiah(p.profit)}</td></tr><tr><td>(-) Prive / Dividen</td><td>${formatRupiah(m.drawing)}</td></tr>`;
+}
+function renderPostClosing(){
+  const tbody=document.getElementById('postClosingTable'); if(!tbody)return;
+  const p=adjustedProfit(), m=periodCapitalMovement();
+  const raw=adjustedAccountMap();
+  const permanent={};
+  Object.entries(raw).forEach(([a,r])=>{
+    if(accountType(a)==='balance' && !/prive|dividen|ikhtisar/i.test(a)) permanent[a]={...r};
+  });
+  const capitalName=Object.keys(permanent).find(a=>/modal|ekuitas|laba ditahan/i.test(a)) || 'Modal';
+  const opening=Math.max(0,(window.__equityOpening||0));
+  const ending=opening+m.investment+p.profit-m.drawing;
+  permanent[capitalName]={debit:0,credit:ending};
+  let td=0,tk=0;
+  const names=Object.keys(permanent).sort();
+  tbody.innerHTML=names.map(n=>{const r=permanent[n],bal=accountBalance(r),side=normalSide(n),d=side==='debit'?bal:0,k=side==='credit'?bal:0;td+=d;tk+=k;return `<tr><td><b>${escapeHTML(n)}</b></td><td>${d?formatRupiah(d):'—'}</td><td>${k?formatRupiah(k):'—'}</td><td>${side==='debit'?'Debit':'Kredit'}</td></tr>`}).join('')||'<tr><td colspan="4"><div class="empty">Belum ada saldo permanen setelah penutupan.</div></td></tr>';
+  document.getElementById('postClosingDebitTotal').textContent=formatRupiah(td); document.getElementById('postClosingCreditTotal').textContent=formatRupiah(tk); document.getElementById('postClosingStatus').textContent=Math.abs(td-tk)<0.005?'✅ Seimbang':'⚠️ Selisih '+formatRupiah(Math.abs(td-tk)); document.getElementById('postClosingPeriod').textContent='Periode: '+getPeriodText();
+}
+function nextPeriodDate(date){const d=new Date(date+'T00:00:00'); d.setMonth(d.getMonth()+1); return d.toISOString().slice(0,10);}
+function canReverseAdjustment(a){const text=(String(a.description||'')+' '+String(a.debitAccount||'')+' '+String(a.creditAccount||'')).toLowerCase(); return /masih harus|akrual|akrual|accrued|accrued expense|accrued revenue/.test(text) || /utang beban|piutang pendapatan|pendapatan masih harus|beban masih harus/.test(text);}
+async function createReversingEntry(id){
+  const a=adjustments.find(x=>x.id===id); if(!a)return;
+  if(!canReverseAdjustment(a)) return alert('Penyesuaian ini tidak termasuk jenis yang lazim dibuat jurnal pembalik. Jurnal pembalik umumnya untuk akrual/beban atau pendapatan yang masih harus dibayar/diterima.');
+  if(reversingEntries.some(r=>r.sourceAdjustmentId===id)) return alert('Jurnal pembalik untuk penyesuaian ini sudah dibuat.');
+  reversingEntries.push({id:uid('rev_'),sourceAdjustmentId:id,date:nextPeriodDate(a.date),debitAccount:a.creditAccount,creditAccount:a.debitAccount,amount:Number(a.amount),description:'Pembalik: '+a.description});
+  await saveData(); renderReversingJournal(); refreshEverything();
+}
+function renderReversingJournal(){
+  const tbody=document.getElementById('reversingTable'); if(!tbody)return;
+  document.getElementById('reversingPeriod').textContent='Jurnal pembalik untuk awal periode berikutnya';
+  const eligible=adjustments.filter(canReverseAdjustment);
+  const existing=new Set(reversingEntries.map(r=>r.sourceAdjustmentId));
+  const rows=[];
+  eligible.forEach(a=>{const r=reversingEntries.find(x=>x.sourceAdjustmentId===a.id); if(r) rows.push(r); else rows.push({pending:true,sourceAdjustmentId:a.id,date:nextPeriodDate(a.date),description:'Pembalik: '+a.description,debitAccount:a.creditAccount,creditAccount:a.debitAccount,amount:Number(a.amount)});});
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty">Belum ada penyesuaian akrual yang dapat dibuat jurnal pembalik.</div></td></tr>';return;}
+  tbody.innerHTML=rows.map(r=>`<tr><td>${escapeHTML(r.date)}</td><td>${escapeHTML(r.description)}</td><td>${escapeHTML(r.debitAccount)} ${formatRupiah(r.amount)}</td><td>${escapeHTML(r.creditAccount)} ${formatRupiah(r.amount)}</td><td>${r.pending?`<button class="btn" type="button" onclick="createReversingEntry('${r.sourceAdjustmentId}')">+ Buat</button>`:`<span class="badge in">✓ Dibuat</span>`}</td></tr>`).join('');
 }
 
 /* =====================================================
@@ -5094,7 +5578,32 @@ function printClosingJournal() {
     const rows = document.getElementById("closingJournalTable")?.innerHTML || "";
     const win = window.open("", "_blank", "width=1100,height=750");
     if(!win) return alert("Izinkan pop-up browser untuk mencetak jurnal penutup.");
-    win.document.write(`<!doctype html><html><head><title>Jurnal Penutup - ${getPeriodText()}</title><style>body{font-family:Arial;padding:30px;color:#111}h1{text-align:center;margin-bottom:4px}p{text-align:center;color:#555}table{width:100%;border-collapse:collapse;margin-top:25px}th,td{border:1px solid #ccc;padding:9px;text-align:left;font-size:12px}th{background:#f3f4f6}.num{text-align:right}</style></head><body><h1>Jurnal Penutup</h1><p>${getPeriodText()} • Pendapatan ${formatRupiah(data.totalRevenue)} • Beban ${formatRupiah(data.totalExpense)} • Laba/(Rugi) ${formatRupiah(data.profit)}</p><table><thead><tr><th>No</th><th>Jenis</th><th>Akun</th><th>Keterangan</th><th>Debit</th><th>Kredit</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>window.print();<\/script></body></html>`);
+    win.document.write(`<!doctype html><html><head><title>Jurnal Penutup - ${getPeriodText()}</title><style>body{font-family:Arial;padding:30px;color:#111}h1{text-align:center;margin-bottom:4px}p{text-align:center;color:#555}table{width:100%;border-collapse:collapse;margin-top:25px}th,td{border:1px solid #ccc;padding:9px;text-align:left;font-size:12px}th{background:#f3f4f6}.num{text-align:right}</style></head><body><h1>Jurnal Penutup</h1><p>${getPeriodText()} • Pendapatan ${formatRupiah(data.totalRevenue)} • Beban ${formatRupiah(data.totalExpense)} • Laba/(Rugi) ${formatRupiah(data.profit)}</p><table><thead><tr><th>No</th><th>Jenis</th><th>Akun</th><th>Keterangan</th><th>Debit</th><th>Kredit</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>window.print();<\/script><div id="changePasswordModal" class="modal" style="display:none;z-index:99999">
+  <div class="modal-box glass" style="max-width:520px;position:relative;z-index:100000">
+    <div class="modal-header"><div><h3>🔐 Ganti Password</h3><span id="changePasswordEmailText">Konfirmasi akan dikirim ke email akun.</span></div><button type="button" class="mini-btn" onclick="closeChangePassword()">✕</button></div>
+    <div style="padding:18px">
+      <p>Email konfirmasi akan dikirim ke <b id="changePasswordEmail">-</b>.</p>
+      <p style="color:var(--muted);font-size:13px">Buka email tersebut dan tekan tombol/tautan untuk melanjutkan proses ganti password.</p>
+      <div id="changePasswordStatus" class="glass" style="padding:12px;margin-top:12px;display:none"></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn secondary" onclick="closeChangePassword()">Batal</button><button type="button" class="btn" id="sendPasswordResetBtn" onclick="sendPasswordResetFromWeb()">📧 Kirim Konfirmasi</button></div>
+  </div>
+</div>
+
+<div id="resetPasswordPage" class="modal" style="display:none;z-index:100001">
+  <div class="modal-box glass" style="max-width:520px;position:relative;z-index:100002">
+    <div class="modal-header"><div><h3>🔐 Ganti Password</h3><span>Konfirmasi dari email berhasil dibuka.</span></div></div>
+    <form onsubmit="confirmNewPassword(event)" style="padding:18px">
+      <p id="resetAccountText" style="color:var(--muted)"></p>
+      <label>Password Baru</label><input id="newPasswordInput" type="password" minlength="6" required placeholder="Minimal 6 karakter" style="width:100%;margin:8px 0 14px;padding:12px">
+      <label>Ulangi Password Baru</label><input id="newPasswordConfirm" type="password" minlength="6" required placeholder="Ulangi password" style="width:100%;margin:8px 0 14px;padding:12px">
+      <div id="resetPasswordStatus" class="glass" style="padding:12px;display:none"></div>
+      <div class="modal-footer"><button class="btn" type="submit">Simpan Password Baru</button></div>
+    </form>
+  </div>
+</div>
+
+</body></html>`);
     win.document.close();
 }
 
@@ -5946,6 +6455,75 @@ document
    REFRESH SEMUA FITUR
 ===================================================== */
 
+function openChangePassword(){
+  const email=(firebaseAuth?.currentUser?.email || currentUser?.email || '').trim();
+  const modal=document.getElementById('changePasswordModal');
+  const emailEl=document.getElementById('changePasswordEmail');
+  if(emailEl) emailEl.textContent=email || 'Email akun tidak tersedia';
+  if(!modal){ alert('Menu Ganti Password tidak tersedia.'); return; }
+  modal.style.display='flex'; modal.classList.add('open');
+}
+function closeChangePassword(){
+  const modal=document.getElementById('changePasswordModal');
+  if(modal){ modal.classList.remove('open'); modal.style.display='none'; }
+}
+async function sendPasswordResetFromWeb(){
+  const user=firebaseAuth?.currentUser;
+  const email=(user?.email || currentUser?.email || '').trim();
+  const status=document.getElementById('changePasswordStatus');
+  const btn=document.getElementById('sendPasswordResetBtn');
+  if(!email){ if(status){status.style.display='block';status.textContent='❌ Email akun tidak tersedia.';} return; }
+  if(btn){btn.disabled=true;btn.textContent='Mengirim...';}
+  if(status){status.style.display='block';status.textContent='Mengirim email konfirmasi...';}
+  try{
+    const settings=(location.protocol==='http:' || location.protocol==='https:') ? {
+      url: location.origin + location.pathname + '?passwordReset=1',
+      handleCodeInApp:true
+    } : undefined;
+    if(settings) await firebaseAuth.sendPasswordResetEmail(email, settings);
+    else await firebaseAuth.sendPasswordResetEmail(email);
+    if(status) status.textContent='✅ Email konfirmasi ganti password sudah dikirim. Periksa Inbox, Spam, atau Promosi.';
+  }catch(error){
+    console.error('Password reset:',error);
+    if(status) status.textContent='❌ Gagal mengirim: '+(friendlyFirebaseError(error)||error.message||'Kesalahan Firebase');
+  }finally{if(btn){btn.disabled=false;btn.textContent='📧 Kirim Konfirmasi';}}
+}
+function handlePasswordResetLink(){
+  const params=new URLSearchParams(location.search);
+  if(params.get('passwordReset')!=='1' || !params.get('oobCode')) return;
+  const modal=document.getElementById('resetPasswordPage');
+  if(!modal)return;
+  const code=params.get('oobCode');
+  try{
+    firebaseAuth.verifyPasswordResetCode(code).then(email=>{
+      document.getElementById('resetAccountText').textContent='Akun: '+email+'. Silakan buat password baru.';
+      modal.style.display='flex'; modal.classList.add('open');
+      window.__passwordResetCode=code;
+    }).catch(err=>{ alert('Tautan reset password tidak valid atau sudah kedaluwarsa.'); console.error(err); });
+  }catch(e){console.error(e);}
+}
+async function confirmNewPassword(e){
+  e.preventDefault();
+  const p=document.getElementById('newPasswordInput').value;
+  const c=document.getElementById('newPasswordConfirm').value;
+  const status=document.getElementById('resetPasswordStatus');
+  if(p!==c){status.style.display='block';status.textContent='❌ Password tidak sama.';return;}
+  try{
+    await firebaseAuth.confirmPasswordReset(window.__passwordResetCode,p);
+    status.style.display='block';status.textContent='✅ Password berhasil diganti. Silakan login menggunakan password baru.';
+  }catch(err){status.style.display='block';status.textContent='❌ '+(friendlyFirebaseError(err)||err.message);}
+}
+function changeGlobalCurrency(value){
+  window.appCurrency=value;
+  try{localStorage.setItem('glassAccountCurrency',value);}catch(e){}
+  if(typeof refreshEverything==='function') refreshEverything();
+}
+function loadGlobalCurrency(){
+  const value=localStorage.getItem('glassAccountCurrency')||'IDR';
+  window.appCurrency=value;
+  const s=document.getElementById('profileCurrencySelect'); if(s)s.value=value;
+}
+
 function refreshEverything() {
 
     updatePeriodUI();
@@ -5961,6 +6539,12 @@ function refreshEverything() {
     );
 
     renderJournal();
+    renderAdjustments();
+    renderTrialBalance();
+    renderWorksheet();
+    renderEquityStatement();
+    renderPostClosing();
+    renderReversingJournal();
 
     renderClosingJournal();
     renderCapital();
@@ -5990,6 +6574,7 @@ function refreshEverything() {
 async function init() {
     initializePeriod();
     updateTransactionCategories();
+    resetAdjustmentForm();
 
     // Selalu tampilkan halaman Sign In/Register saat website pertama kali dibuka.
     // Sesi Firebase lama tidak otomatis membawa pengguna langsung ke Dashboard.
@@ -6012,6 +6597,9 @@ async function init() {
     updateDashboard();
     renderTransactions();
     renderJournal();
+    renderEquityStatement();
+    renderPostClosing();
+    renderReversingJournal();
     renderClosingJournal();
     renderLedger();
     renderIncome();
