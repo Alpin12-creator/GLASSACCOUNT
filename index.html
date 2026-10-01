@@ -151,6 +151,7 @@ button {
 }
 
 
+
 /* ===== COLLAPSIBLE GLASS SIDEBAR GROUPS ===== */
 .nav-group{
     margin:10px 0;
@@ -1025,8 +1026,6 @@ tr:hover td {
 
 @media(max-width:700px) {
 
-.tools-mode .period-bar { display: none !important; }
-
     .period-bar {
         align-items:flex-start;
         flex-direction:column;
@@ -1086,6 +1085,10 @@ tr:hover td {
         flex: 1 1 100%;
     }
 }
+
+.tools-mode .period-bar, .profile-mode .period-bar { display: none !important; }
+
+.lesson-example{margin-top:18px;padding:18px;border:1px solid rgba(255,255,255,.28);border-radius:18px;background:rgba(255,255,255,.12);box-shadow:0 8px 24px rgba(30,40,80,.08)}.lesson-example h4{margin:0 0 10px;font-size:17px}.lesson-example p{margin:8px 0}.lesson-example b{font-weight:700}
 </style>
 
 <style id="animated-auth-style">
@@ -1569,7 +1572,7 @@ tr:hover td {
 
     </div>
 
-    <button class="nav-item" data-page="dashboard"><span class="nav-icon">⌂</span>Dashboard</button>
+    <button class="nav-item" data-page="dashboard" type="button"><span class="nav-icon">⌂</span>Dashboard</button>
 
     <div class="nav-group" data-nav-group="recording">
         <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)" aria-expanded="false">
@@ -1642,7 +1645,6 @@ tr:hover td {
             <button class="nav-item" data-page="accountingCalculator"><span class="nav-icon">🧮</span>Kalkulator Akuntansi</button>
             <button class="nav-item" data-page="learnAccounting"><span class="nav-icon">📚</span>Belajar Akuntansi</button>
             <button class="nav-item" data-page="calculator"><span class="nav-icon">🧮</span>HPP &amp; BEP</button>
-            <button class="nav-item" data-page="profile"><span class="nav-icon">👤</span>Profil</button>
         </div></div>
     </div>
 
@@ -1688,7 +1690,7 @@ tr:hover td {
                 🔔
             </button>
 
-            <div class="profile">
+            <div class="profile" id="profileButton" role="link" tabindex="0" aria-label="Buka halaman profil akun" title="Buka halaman profil akun">
 
                 <div class="avatar" id="profileAvatar">
                     U
@@ -1700,9 +1702,30 @@ tr:hover td {
                     <small id="profileEmail">-</small>
                 </div>
 
-                <button class="logout-btn" id="logoutBtn" type="button" onclick="logoutGlassAccount(event)">
-                    Keluar
-                </button>
+                <div class="profile-menu" id="profileMenu" role="menu" aria-hidden="true">
+                    <div class="profile-menu-head">
+                        <div class="profile-menu-avatar" id="profileMenuAvatar">U</div>
+                        <div>
+                            <div class="profile-menu-name" id="profileMenuName">User</div>
+                            <div class="profile-menu-email" id="profileMenuEmail">-</div>
+                            <div class="profile-menu-status">Akun aktif</div>
+                        </div>
+                    </div>
+                    <button class="profile-menu-item" type="button" role="menuitem" onclick="openProfilePage(event)">
+                        <span class="pm-icon">👤</span><span>Profil Akun</span>
+                    </button>
+                    <button class="profile-menu-item" type="button" role="menuitem" onclick="closeProfileMenu(); document.getElementById('notifyBtn')?.click()">
+                        <span class="pm-icon">🔔</span><span>Notifikasi</span>
+                    </button>
+                    <button class="profile-menu-item" type="button" role="menuitem" onclick="closeProfileMenu(); document.getElementById('themeBtn')?.click()">
+                        <span class="pm-icon">🌙</span><span>Ganti Tampilan</span>
+                    </button>
+                    <div class="profile-menu-divider"></div>
+                    <button class="profile-menu-item profile-menu-logout" type="button" role="menuitem" onclick="logoutGlassAccount(event)">
+                        <span class="pm-icon">↪</span><span>Keluar dari Akun</span>
+                    </button>
+                    <div class="profile-menu-note">Akunmu tersambung dengan Firebase Authentication. Data akuntansi tersimpan pada akun ini.</div>
+                </div>
 
             </div>
 
@@ -1766,41 +1789,6 @@ tr:hover td {
 
 
 <!-- ================= DASHBOARD ================= -->
-
-<section class="page" id="profile">
-  <div class="card glass" style="max-width:1100px;margin:0 auto">
-    <div class="card-header">
-      <div><h3>👤 Profil Akun</h3><span>Kelola akun dan pengaturan aplikasi.</span></div>
-    </div>
-    <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;gap:18px">
-      <div class="glass" style="padding:20px">
-        <h3>Informasi Akun</h3>
-        <div style="display:grid;gap:14px;margin-top:16px">
-          <div><small>Username</small><strong id="profilePageUsername" style="display:block">-</strong></div>
-          <div><small>Email</small><strong id="profilePageEmail" style="display:block">-</strong></div>
-          <div><small>Status</small><strong style="display:block">● Aktif</strong></div>
-          <div><small>Password</small><strong style="display:block;letter-spacing:3px">••••••••</strong></div>
-          <button class="btn" type="button" onclick="openChangePassword()">🔐 Ganti Password</button>
-        </div>
-      </div>
-      <div class="glass" style="padding:20px">
-        <h3>⚙️ Pengaturan</h3>
-        <p style="color:var(--muted)">Pengaturan yang dipilih berlaku untuk seluruh tampilan web.</p>
-        <label for="profileCurrencySelect">Mata Uang</label>
-        <select id="profileCurrencySelect" class="glass" style="width:100%;padding:12px;margin-top:8px" onchange="changeGlobalCurrency(this.value)">
-          <option value="IDR">🇮🇩 Rupiah Indonesia (IDR)</option>
-          <option value="USD">🇺🇸 US Dollar (USD)</option>
-          <option value="EUR">🇪🇺 Euro (EUR)</option>
-          <option value="GBP">🇬🇧 Pound Sterling (GBP)</option>
-          <option value="JPY">🇯🇵 Yen Jepang (JPY)</option>
-          <option value="CNY">🇨🇳 Yuan Tiongkok (CNY)</option>
-          <option value="SGD">🇸🇬 Dollar Singapura (SGD)</option>
-          <option value="MYR">🇲🇾 Ringgit Malaysia (MYR)</option>
-        </select>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="page active" id="dashboard">
 
@@ -3270,6 +3258,112 @@ tr:hover td {
 </section>
 
 </main>
+<section class="page" id="profile">
+  <div class="card glass profile-page-card">
+    <div class="card-header">
+      <div><h3>👤 Profil Akun</h3><span>Kelola informasi akun dan foto profil kamu.</span></div>
+      <button class="btn secondary" type="button" onclick="backToDashboardFromProfile()">← Kembali ke Dashboard</button>
+    </div>
+
+    <div class="profile-page-hero glass">
+      <div class="profile-page-photo-wrap">
+        <div class="profile-page-photo" id="profilePageAvatar">U</div>
+        <label class="profile-photo-edit" for="profilePhotoInput" title="Ganti foto profil">📷</label>
+        <input id="profilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+      </div>
+      <div class="profile-page-main">
+        <h2 id="profilePageName">User</h2>
+        <p id="profilePageEmail">-</p>
+        <span class="profile-active-badge">● Akun aktif</span>
+      </div>
+    </div>
+
+    <div class="profile-page-grid">
+      <div class="glass profile-info-card">
+        <h4>Informasi Akun</h4>
+        <div class="profile-info-row"><span>Username</span><b id="profilePageUsername">-</b></div>
+        <div class="profile-info-row"><span>Email</span><b id="profilePageEmail2">-</b></div>
+        <div class="profile-info-row"><span>Status</span><b class="profile-ok">Aktif</b></div>
+        <div class="profile-info-row">
+          <span>Password</span>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+            <b id="profilePagePassword">••••••••</b>
+            <button class="btn secondary" id="changePasswordButton" type="button" onclick="openChangePasswordModal(event)">🔐 Ganti Password</button>
+          </div>
+        </div>
+        <div class="profile-help" style="margin-top:12px;">Untuk keamanan, penggantian password memerlukan verifikasi melalui email akun yang tercantum di atas.</div>
+      </div>
+
+      <div class="glass profile-info-card profile-settings-card">
+        <h4>⚙️ Pengaturan</h4>
+        <div class="profile-setting-block">
+          <label for="currencySelect"><b>Jenis Mata Uang</b></label>
+          <p class="profile-help">Pilih mata uang yang digunakan untuk menampilkan nominal di seluruh web.</p>
+          <select id="currencySelect" class="form-control" onchange="changeCurrency(this.value)">
+            <option value="IDR">🇮🇩 Rupiah Indonesia (IDR)</option>
+            <option value="USD">🇺🇸 US Dollar (USD)</option>
+            <option value="EUR">🇪🇺 Euro (EUR)</option>
+            <option value="GBP">🇬🇧 Pound Sterling (GBP)</option>
+            <option value="JPY">🇯🇵 Yen Jepang (JPY)</option>
+            <option value="CNY">🇨🇳 Yuan Tiongkok (CNY)</option>
+            <option value="SGD">🇸🇬 Dollar Singapura (SGD)</option>
+            <option value="MYR">🇲🇾 Ringgit Malaysia (MYR)</option>
+            <option value="AUD">🇦🇺 Dollar Australia (AUD)</option>
+            <option value="CAD">🇨🇦 Dollar Kanada (CAD)</option>
+            <option value="CHF">🇨🇭 Franc Swiss (CHF)</option>
+            <option value="KRW">🇰🇷 Won Korea Selatan (KRW)</option>
+            <option value="THB">🇹🇭 Baht Thailand (THB)</option>
+            <option value="PHP">🇵🇭 Peso Filipina (PHP)</option>
+            <option value="INR">🇮🇳 Rupee India (INR)</option>
+            <option value="AED">🇦🇪 Dirham UEA (AED)</option>
+            <option value="SAR">🇸🇦 Riyal Arab Saudi (SAR)</option>
+          </select>
+          <div class="currency-note">Kurs konversi merupakan kurs referensi bawaan aplikasi, bukan kurs pasar real-time.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="modal-overlay" id="changePasswordModal" style="display:none;z-index:10001;">
+  <div class="modal glass" style="max-width:460px;width:calc(100% - 32px);">
+    <div class="modal-header">
+      <div><h3>🔐 Ganti Password</h3><span>Verifikasi dilakukan melalui email akun kamu.</span></div>
+      <button class="icon-btn" type="button" onclick="closeChangePasswordModal()">✕</button>
+    </div>
+    <div class="glass" style="padding:14px;line-height:1.7;margin-bottom:14px;">
+      <div style="font-size:13px;">Kami akan mengirim <b>email verifikasi/reset password</b> ke:</div>
+      <div id="changePasswordEmail" style="font-weight:800;margin-top:5px;word-break:break-word;">-</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;">Firebase Authentication menggunakan tautan verifikasi yang dikirim ke email. Setelah tautan dibuka, password dapat diganti dengan aman. Sistem tidak menyimpan atau menampilkan password asli.</div>
+    </div>
+    <div id="changePasswordStatus" class="profile-photo-status" style="margin-bottom:4px;"></div>
+    <div class="modal-footer" style="margin-top:16px;">
+      <button class="btn secondary" type="button" onclick="closeChangePasswordModal()">Batal</button>
+      <button class="btn" id="sendPasswordResetBtn" type="button" onclick="sendPasswordResetVerification()">📧 Kirim Verifikasi Email</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="profileDetailsModal" style="display:none;z-index:10000;">
+  <div class="modal glass" style="max-width:430px;width:calc(100% - 32px);">
+    <div class="modal-header">
+      <div><h3>👤 Profil Akun</h3><span>Informasi akun yang sedang digunakan.</span></div>
+      <button class="icon-btn" type="button" onclick="closeProfileDetails()">✕</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;padding:6px 0 18px;">
+      <div class="profile-menu-avatar" id="profileDetailAvatar">U</div>
+      <div><div style="font-size:18px;font-weight:800" id="profileDetailName">User</div><div style="color:var(--muted);font-size:13px" id="profileDetailEmail">-</div></div>
+    </div>
+    <div class="glass" style="padding:14px;line-height:1.8;">
+      <div><b>Status:</b> <span style="color:#16a34a">● Aktif</span></div>
+      <div><b>Username:</b> <span id="profileDetailUsername">-</span></div>
+      <div><b>Email:</b> <span id="profileDetailEmail2">-</span></div>
+    </div>
+    <div class="modal-footer" style="margin-top:16px;"><button class="btn secondary" type="button" onclick="closeProfileDetails()">Tutup</button><button class="btn danger" type="button" onclick="logoutGlassAccount(event)">Keluar</button></div>
+  </div>
+</div>
+
 </div>
 
 
@@ -3546,7 +3640,14 @@ function friendlyFirebaseError(error) {
     "auth/user-disabled": "Akun ini dinonaktifkan.",
     "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi nanti.",
     "auth/invalid-api-key": "Firebase API key tidak valid.",
-    "auth/app-not-authorized": "Domain website belum diizinkan di Firebase Authentication."
+    "auth/app-not-authorized": "Domain website belum diizinkan di Firebase Authentication.",
+    "auth/invalid-continue-uri": "Alamat halaman kembali Firebase tidak diizinkan.",
+    "auth/missing-continue-uri": "Alamat halaman kembali Firebase belum tersedia.",
+    "auth/unauthorized-continue-uri": "Domain halaman kembali belum ditambahkan ke Authorized domains Firebase.",
+    "auth/quota-exceeded": "Batas pengiriman email Firebase tercapai. Tunggu beberapa saat lalu coba lagi.",
+    "auth/internal-error": "Firebase mengalami kesalahan internal saat mengirim email.",
+    "auth/invalid-user-token": "Sesi login sudah tidak valid. Silakan login kembali.",
+    "auth/requires-recent-login": "Silakan login kembali sebelum mengganti password."
   };
   return messages[code] || error?.message || "Terjadi kesalahan Firebase.";
 }
@@ -3577,6 +3678,8 @@ function showApp() {
     appShell.setAttribute("aria-hidden", "false");
   }
   updateProfile();
+  loadSavedProfile();
+  loadCurrencySetting();
 }
 
 function showAuth() {
@@ -3595,16 +3698,228 @@ function showAuth() {
   switchAuth("login");
 }
 
+function setProfileAvatarElement(el, photo, initial) {
+  if (!el) return;
+  if (photo) {
+    el.textContent = "";
+    el.style.backgroundImage = `url("${photo.replace(/"/g, '%22')}")`;
+    el.classList.add("has-profile-photo");
+    el.setAttribute("aria-label", "Foto profil");
+  } else {
+    el.textContent = initial;
+    el.style.backgroundImage = "";
+    el.classList.remove("has-profile-photo");
+  }
+}
+
+async function loadSavedProfile(){
+  if(!currentUser?.id) return;
+  try{
+    const snap=await db.ref("users/"+currentUser.id+"/profile").once("value");
+    const p=snap.val()||{};
+    currentUser.name=p.name||currentUser.name;
+    currentUser.username=p.username||currentUser.username;
+    currentUser.email=p.email||currentUser.email;
+    currentUser.photoURL=p.photoURL||"";
+    if(p.settings?.currency && currencyConfig[p.settings.currency]) selectedCurrency=p.settings.currency;
+    updateProfile();
+  }catch(err){console.warn("Profil Firebase belum dapat dimuat",err);}
+}
+
 function updateProfile() {
   if (!currentUser) return;
   const name = currentUser.name || currentUser.username || currentUser.email?.split("@")[0] || "User";
-  const n = document.getElementById("profileName");
-  const e = document.getElementById("profileEmail");
-  const a = document.getElementById("profileAvatar");
-  if (n) n.textContent = name;
-  if (e) e.textContent = currentUser.email || "";
-  if (a) a.textContent = name.trim().charAt(0).toUpperCase();
+  const email = currentUser.email || "";
+  const username = currentUser.username || name;
+  const initial = name.trim().charAt(0).toUpperCase() || "U";
+  const photo = currentUser.photoURL || currentUser.photo || "";
+  ["profileName","profileMenuName","profileDetailName","profilePageName"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=name;});
+  ["profileEmail","profileMenuEmail","profileDetailEmail","profileDetailEmail2","profilePageEmail","profilePageEmail2"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=email;});
+  ["profileDetailUsername","profilePageUsername"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=username;});
+  const currencySelect=document.getElementById('currencySelect'); if(currencySelect) currencySelect.value=selectedCurrency;
+  ["profileAvatar","profileMenuAvatar","profileDetailAvatar","profilePageAvatar"].forEach(id=>setProfileAvatarElement(document.getElementById(id),photo,initial));
 }
+function openProfileMenu(){
+  const menu=document.getElementById("profileMenu"), btn=document.getElementById("profileButton");
+  if(!menu||!btn)return;
+  menu.classList.add("open"); menu.setAttribute("aria-hidden","false"); btn.setAttribute("aria-expanded","true"); updateProfile();
+}
+function closeProfileMenu(){
+  const menu=document.getElementById("profileMenu"), btn=document.getElementById("profileButton");
+  if(!menu||!btn)return;
+  menu.classList.remove("open"); menu.setAttribute("aria-hidden","true"); btn.setAttribute("aria-expanded","false");
+}
+function toggleProfileMenu(e){
+  // Profil diperlakukan seperti item navigasi: klik langsung membuka halaman Profil.
+  // Tidak membuka dropdown yang dapat menyebabkan kedipan/klik menembus elemen di bawahnya.
+  e?.preventDefault();
+  e?.stopPropagation();
+  openProfilePage(e);
+}
+function openProfilePage(e){
+  e?.stopPropagation(); closeProfileMenu();
+  const page=document.getElementById("profile");
+  if(!page) return;
+  navItems.forEach(n=>n.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  page.classList.add("active");
+  const profileNav=document.querySelector('.nav-item[data-page="profile"]');
+  profileNav?.classList.add("active");
+  document.body.classList.remove("tools-mode");
+  document.body.classList.add("profile-mode");
+  const title=document.getElementById("pageTitle"), subtitle=document.getElementById("pageSubtitle");
+  if(title) title.textContent=titles.profile[0];
+  if(subtitle) subtitle.textContent=titles.profile[1];
+  updateProfile();
+  window.scrollTo({top:0,behavior:"auto"});
+}
+function backToDashboardFromProfile(){
+  const dashboard=document.getElementById("dashboard");
+  if(!dashboard) return;
+  closeProfileMenu();
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  dashboard.classList.add("active");
+  navItems.forEach(n=>n.classList.remove("active"));
+  const dashNav=document.querySelector('.nav-item[data-page="dashboard"]');
+  dashNav?.classList.add("active");
+  document.body.classList.remove("tools-mode", "profile-mode");
+  const title=document.getElementById("pageTitle"), subtitle=document.getElementById("pageSubtitle");
+  if(title) title.textContent=titles.dashboard[0];
+  if(subtitle) subtitle.textContent=titles.dashboard[1];
+  refreshEverything();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function openProfileDetails(e){ openProfilePage(e); }
+function closeProfileDetails(){const m=document.getElementById("profileDetailsModal");if(m){m.style.display="none";m.setAttribute("aria-hidden","true");}}
+window.closeProfileMenu=closeProfileMenu; window.openProfileDetails=openProfileDetails; window.openProfilePage=openProfilePage; window.closeProfileDetails=closeProfileDetails; window.backToDashboardFromProfile=backToDashboardFromProfile;
+
+async function sendProfileMessage(){
+  const subject=(document.getElementById('profileMessageSubject')?.value||'').trim();
+  const message=(document.getElementById('profileMessageBody')?.value||'').trim();
+  const status=document.getElementById('profileMessageStatus');
+  const btn=document.getElementById('sendProfileMessageBtn');
+  const authUser=(typeof firebaseAuth!=='undefined' && firebaseAuth?.currentUser)?firebaseAuth.currentUser:null;
+  const email=(authUser?.email || currentUser?.email || '').trim();
+  if(!email){ if(status) status.textContent='❌ Kamu harus login terlebih dahulu.'; return; }
+  if(!subject || !message){ if(status) status.textContent='❌ Subjek dan pesan wajib diisi.'; return; }
+  if(btn){btn.disabled=true;btn.textContent='📨 Mengirim...';}
+  if(status) status.textContent='Sedang mengirim pesan ke '+email+'...';
+  try{
+    const endpoint='https://formsubmit.co/ajax/'+encodeURIComponent(email);
+    const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:subject,message:message,email:email,_captcha:'false',_template:'table'})});
+    const result=await response.json().catch(()=>({success:false}));
+    if(!response.ok || result.success===false) throw new Error(result.message||'Layanan email menolak pesan.');
+    if(status) status.textContent='✅ Pesan berhasil dikirim ke '+email+'.';
+    const a=document.getElementById('profileMessageSubject'), b=document.getElementById('profileMessageBody'); if(a)a.value=''; if(b)b.value='';
+  }catch(err){ if(status) status.textContent='❌ Gagal mengirim: '+(err?.message||'Periksa koneksi internet.'); }
+  finally{ if(btn){btn.disabled=false;btn.textContent='📧 Kirim Pesan';} }
+}
+
+function openChangePasswordModal(event){
+  try{
+    if(event){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation?.();}
+    const authUser=(typeof firebaseAuth!=='undefined' && firebaseAuth.currentUser)?firebaseAuth.currentUser:null;
+    const email=(currentUser?.email || authUser?.email || '').trim();
+    const m=document.getElementById('changePasswordModal');
+    const emailEl=document.getElementById('changePasswordEmail');
+    const st=document.getElementById('changePasswordStatus');
+    if(!m) return alert('Menu Ganti Password belum tersedia. Muat ulang halaman terlebih dahulu.');
+    if(!email){
+      if(st){st.textContent='Email akun tidak ditemukan. Silakan login ulang.';st.className='profile-photo-status';}
+      m.setAttribute('aria-hidden','false');
+      m.style.display='flex'; m.style.visibility='visible'; m.style.opacity='1'; m.style.pointerEvents='auto';
+      return;
+    }
+    if(emailEl) emailEl.textContent=email;
+    if(st){st.textContent='';st.className='profile-photo-status';}
+    m.setAttribute('aria-hidden','false');
+    m.style.display='flex';
+    m.style.visibility='visible';
+    m.style.opacity='1';
+    m.style.pointerEvents='auto';
+  }catch(err){console.error('Open change password:',err);alert('Menu Ganti Password gagal dibuka.');}
+}
+function closeChangePasswordModal(){
+  const m=document.getElementById('changePasswordModal');
+  if(m){m.setAttribute('aria-hidden','true');m.style.display='none';m.style.visibility='hidden';m.style.opacity='0';m.style.pointerEvents='none';}
+}
+async function sendPasswordResetVerification(){
+  const authUser=(typeof firebaseAuth!=='undefined' && firebaseAuth.currentUser)?firebaseAuth.currentUser:null;
+  const email=(authUser?.email || currentUser?.email || '').trim();
+  const btn=document.getElementById('sendPasswordResetBtn');
+  const st=document.getElementById('changePasswordStatus');
+  const setStatus=(text,ok=false)=>{
+    if(st){st.textContent=text;st.className='profile-photo-status '+(ok?'success':'');}
+  };
+  if(!email){
+    setStatus('❌ Email akun tidak tersedia. Silakan keluar lalu login kembali.');
+    return;
+  }
+  if(typeof firebaseAuth==='undefined' || !firebaseAuth || typeof firebaseAuth.sendPasswordResetEmail!=='function'){
+    setStatus('❌ Firebase Authentication belum siap. Muat ulang halaman lalu coba lagi.');
+    return;
+  }
+  if(btn){btn.disabled=true;btn.textContent='📨 Mengirim email...';}
+  setStatus('Sedang mengirim email reset password ke '+email+'...');
+  try{
+    // Jangan memakai continueUrl file:// karena aplikasi sering dibuka langsung dari file HTML.
+    // Firebase akan menggunakan halaman reset password bawaannya di authDomain.
+    firebaseAuth.useDeviceLanguage();
+    await firebaseAuth.sendPasswordResetEmail(email);
+    setStatus('✅ Email reset password berhasil diminta untuk '+email+'. Periksa Inbox, Spam, atau Promosi.',true);
+  }catch(err){
+    console.error('Password reset Firebase:',err);
+    const code=err?.code||'';
+    let msg=typeof friendlyFirebaseError==='function'?friendlyFirebaseError(err):(err?.message||'Kesalahan Firebase.');
+    if(code==='auth/user-not-found') msg='Akun dengan email tersebut tidak ditemukan di Firebase Authentication.';
+    if(code==='auth/operation-not-allowed') msg='Login Email/Password belum diaktifkan di Firebase Console → Authentication → Sign-in method.';
+    if(code==='auth/unauthorized-continue-uri') msg='Domain belum diizinkan Firebase. Tambahkan domain website pada Authentication → Settings → Authorized domains.';
+    setStatus('❌ '+msg+' ('+code+')');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='📧 Kirim Verifikasi Email';}
+  }
+}
+window.openChangePasswordModal=openChangePasswordModal;
+window.closeChangePasswordModal=closeChangePasswordModal;
+window.sendPasswordResetVerification=sendPasswordResetVerification;
+
+async function saveProfilePhoto(file) {
+  if (!currentUser || !file) return;
+  const status=document.getElementById("profilePhotoStatus");
+  const setStatus=(t,ok=false)=>{if(status){status.textContent=t;status.className="profile-photo-status "+(ok?"success":"");}};
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)) return setStatus("Format foto harus JPG, PNG, atau WEBP.");
+  if(file.size>5*1024*1024) return setStatus("Ukuran foto maksimal 5 MB.");
+  setStatus("Memproses foto...");
+  try{
+    const dataUrl=await new Promise((resolve,reject)=>{
+      const reader=new FileReader(); reader.onload=()=>resolve(reader.result); reader.onerror=reject; reader.readAsDataURL(file);
+    });
+    const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=dataUrl;});
+    const max=512, scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement("canvas"); canvas.width=Math.max(1,Math.round(img.width*scale)); canvas.height=Math.max(1,Math.round(img.height*scale));
+    const ctx=canvas.getContext("2d"); ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const compressed=canvas.toDataURL("image/jpeg",.82);
+    await db.ref("users/"+currentUser.id+"/profile/photoURL").set(compressed);
+    currentUser.photoURL=compressed; updateProfile(); setStatus("Foto profil berhasil disimpan.",true);
+  }catch(err){ console.error(err); setStatus("Foto gagal disimpan. Coba lagi."); }
+}
+async function removeProfilePhoto(){
+  if(!currentUser)return;
+  const status=document.getElementById("profilePhotoStatus");
+  try{ await db.ref("users/"+currentUser.id+"/profile/photoURL").remove(); currentUser.photoURL=""; updateProfile(); if(status){status.textContent="Foto profil dihapus.";status.className="profile-photo-status success";} }
+  catch(err){console.error(err);if(status)status.textContent="Foto gagal dihapus.";}
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const btn=document.getElementById("profileButton");
+  if(btn){btn.addEventListener("click",toggleProfileMenu);btn.addEventListener("keydown",e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleProfileMenu(e);}});}
+  document.getElementById("profileDetailsModal")?.addEventListener("click",e=>{if(e.target.id==='profileDetailsModal')closeProfileDetails();});
+  document.getElementById("changePasswordModal")?.addEventListener("click",e=>{if(e.target.id==='changePasswordModal')closeChangePasswordModal();});
+  document.getElementById("changePasswordButton")?.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation(); openChangePasswordModal(e); });
+  document.getElementById("sendPasswordResetBtn")?.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation(); sendPasswordResetVerification(); });
+  document.getElementById("profilePhotoInput")?.addEventListener("change",e=>{const file=e.target.files?.[0];if(file)saveProfilePhoto(file);e.target.value="";});
+  document.getElementById("removeProfilePhotoBtn")?.addEventListener("click",removeProfilePhoto);
+});
 
 function setAuthButtonLoading(formId, loading, text) {
   const form = document.getElementById(formId);
@@ -3627,7 +3942,8 @@ function getBaseProfile(user, username) {
     id: user.uid,
     name: username || user.displayName || user.email?.split("@")[0] || "User",
     username: username || user.email?.split("@")[0] || "user",
-    email: user.email || ""
+    email: user.email || "",
+    photoURL: user.photoURL || ""
   };
 }
 
@@ -4164,18 +4480,34 @@ function getPeriodText() {
    UTIL
 ===================================================== */
 
+const currencyConfig = {
+    IDR:{locale:"id-ID",rate:1}, USD:{locale:"en-US",rate:1/16000}, EUR:{locale:"de-DE",rate:1/17500}, GBP:{locale:"en-GB",rate:1/20500},
+    JPY:{locale:"ja-JP",rate:1/105}, CNY:{locale:"zh-CN",rate:1/2250}, SGD:{locale:"en-SG",rate:1/12500}, MYR:{locale:"ms-MY",rate:1/3800},
+    AUD:{locale:"en-AU",rate:1/10500}, CAD:{locale:"en-CA",rate:1/11700}, CHF:{locale:"de-CH",rate:1/19000}, KRW:{locale:"ko-KR",rate:1/12},
+    THB:{locale:"th-TH",rate:1/470}, PHP:{locale:"en-PH",rate:1/285}, INR:{locale:"en-IN",rate:1/190}, AED:{locale:"ar-AE",rate:1/4350}, SAR:{locale:"ar-SA",rate:1/4250}
+};
+let selectedCurrency = localStorage.getItem("accounting_currency") || "IDR";
 function formatRupiah(number) {
-
-    return new Intl.NumberFormat("id-ID",{
-
-        style:"currency",
-
-        currency:"IDR",
-
-        maximumFractionDigits:0
-
-    }).format(number);
-
+    const cfg=currencyConfig[selectedCurrency]||currencyConfig.IDR;
+    const converted=Number(number||0)*cfg.rate;
+    const fraction=(selectedCurrency==='JPY'||selectedCurrency==='KRW')?0:2;
+    return new Intl.NumberFormat(cfg.locale,{style:"currency",currency:selectedCurrency,maximumFractionDigits:fraction}).format(converted);
+}
+async function changeCurrency(currency){
+    if(!currencyConfig[currency]) currency='IDR';
+    selectedCurrency=currency;
+    localStorage.setItem("accounting_currency",currency);
+    if(currentUser){
+      try{ await db.ref("users/"+currentUser.id+"/profile/settings/currency").set(currency); }catch(err){ console.warn("Pengaturan mata uang tidak tersimpan:",err); }
+    }
+    const select=document.getElementById('currencySelect'); if(select) select.value=currency;
+    refreshEverything();
+}
+async function loadCurrencySetting(){
+    if(!currentUser)return;
+    try{ const snap=await db.ref("users/"+currentUser.id+"/profile/settings/currency").once("value"); if(snap.exists()&&currencyConfig[snap.val()]) selectedCurrency=snap.val(); }catch(err){}
+    localStorage.setItem("accounting_currency",selectedCurrency);
+    const select=document.getElementById('currencySelect'); if(select) select.value=selectedCurrency;
 }
 
 
@@ -4372,11 +4704,6 @@ const titles = {
         "Pantau kondisi keuangan bisnis lo."
     ],
 
-    profile:[
-        "Profil Akun",
-        "Kelola informasi akun dan pengaturan aplikasi."
-    ],
-
     transactions:[
         "Transaksi",
         "Kelola pemasukan dan pengeluaran."
@@ -4480,6 +4807,11 @@ const titles = {
     calculator:[
         "HPP & BEP",
         "Hitung HPP dan titik impas."
+    ],
+
+    profile:[
+        "Profil Akun",
+        "Kelola informasi akun dan foto profil."
     ]
 
 };
@@ -4509,6 +4841,9 @@ navItems.forEach(item => {
             .getElementById(page)
             .classList.add("active");
 
+        // Navigasi sidebar selalu menutup tampilan Profil khusus.
+        document.body.classList.remove("profile-mode");
+        if(page === "profile") document.body.classList.add("profile-mode");
 
         // Hilangkan baris "Periode Aktif" khusus halaman Tools.
         // Halaman laporan/transaksi tetap menggunakan periode aktif.
@@ -5578,31 +5913,7 @@ function printClosingJournal() {
     const rows = document.getElementById("closingJournalTable")?.innerHTML || "";
     const win = window.open("", "_blank", "width=1100,height=750");
     if(!win) return alert("Izinkan pop-up browser untuk mencetak jurnal penutup.");
-    win.document.write(`<!doctype html><html><head><title>Jurnal Penutup - ${getPeriodText()}</title><style>body{font-family:Arial;padding:30px;color:#111}h1{text-align:center;margin-bottom:4px}p{text-align:center;color:#555}table{width:100%;border-collapse:collapse;margin-top:25px}th,td{border:1px solid #ccc;padding:9px;text-align:left;font-size:12px}th{background:#f3f4f6}.num{text-align:right}</style></head><body><h1>Jurnal Penutup</h1><p>${getPeriodText()} • Pendapatan ${formatRupiah(data.totalRevenue)} • Beban ${formatRupiah(data.totalExpense)} • Laba/(Rugi) ${formatRupiah(data.profit)}</p><table><thead><tr><th>No</th><th>Jenis</th><th>Akun</th><th>Keterangan</th><th>Debit</th><th>Kredit</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>window.print();<\/script><div id="changePasswordModal" class="modal" style="display:none;z-index:99999">
-  <div class="modal-box glass" style="max-width:520px;position:relative;z-index:100000">
-    <div class="modal-header"><div><h3>🔐 Ganti Password</h3><span id="changePasswordEmailText">Konfirmasi akan dikirim ke email akun.</span></div><button type="button" class="mini-btn" onclick="closeChangePassword()">✕</button></div>
-    <div style="padding:18px">
-      <p>Email konfirmasi akan dikirim ke <b id="changePasswordEmail">-</b>.</p>
-      <p style="color:var(--muted);font-size:13px">Buka email tersebut dan tekan tombol/tautan untuk melanjutkan proses ganti password.</p>
-      <div id="changePasswordStatus" class="glass" style="padding:12px;margin-top:12px;display:none"></div>
-    </div>
-    <div class="modal-footer"><button type="button" class="btn secondary" onclick="closeChangePassword()">Batal</button><button type="button" class="btn" id="sendPasswordResetBtn" onclick="sendPasswordResetFromWeb()">📧 Kirim Konfirmasi</button></div>
-  </div>
-</div>
-
-<div id="resetPasswordPage" class="modal" style="display:none;z-index:100001">
-  <div class="modal-box glass" style="max-width:520px;position:relative;z-index:100002">
-    <div class="modal-header"><div><h3>🔐 Ganti Password</h3><span>Konfirmasi dari email berhasil dibuka.</span></div></div>
-    <form onsubmit="confirmNewPassword(event)" style="padding:18px">
-      <p id="resetAccountText" style="color:var(--muted)"></p>
-      <label>Password Baru</label><input id="newPasswordInput" type="password" minlength="6" required placeholder="Minimal 6 karakter" style="width:100%;margin:8px 0 14px;padding:12px">
-      <label>Ulangi Password Baru</label><input id="newPasswordConfirm" type="password" minlength="6" required placeholder="Ulangi password" style="width:100%;margin:8px 0 14px;padding:12px">
-      <div id="resetPasswordStatus" class="glass" style="padding:12px;display:none"></div>
-      <div class="modal-footer"><button class="btn" type="submit">Simpan Password Baru</button></div>
-    </form>
-  </div>
-</div>
-
+    win.document.write(`<!doctype html><html><head><title>Jurnal Penutup - ${getPeriodText()}</title><style>body{font-family:Arial;padding:30px;color:#111}h1{text-align:center;margin-bottom:4px}p{text-align:center;color:#555}table{width:100%;border-collapse:collapse;margin-top:25px}th,td{border:1px solid #ccc;padding:9px;text-align:left;font-size:12px}th{background:#f3f4f6}.num{text-align:right}</style></head><body><h1>Jurnal Penutup</h1><p>${getPeriodText()} • Pendapatan ${formatRupiah(data.totalRevenue)} • Beban ${formatRupiah(data.totalExpense)} • Laba/(Rugi) ${formatRupiah(data.profit)}</p><table><thead><tr><th>No</th><th>Jenis</th><th>Akun</th><th>Keterangan</th><th>Debit</th><th>Kredit</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>window.print();<\/script>
 </body></html>`);
     win.document.close();
 }
@@ -5924,6 +6235,7 @@ const accountingLessons = {
             <li>Pastikan jumlah Debit = jumlah Kredit.</li>
         </ol>
         <div class="glass" style="padding:16px"><b>Contoh:</b> Pemilik menyetor modal tunai Rp10.000.000.<br>Debit Kas Rp10.000.000<br>Kredit Modal Rp10.000.000<br><b>Hasil:</b> Debit = Kredit = Rp10.000.000.</div>
+        <div class="lesson-example"><h4>📝 Contoh Soal Mudah</h4><p><b>Soal:</b> Pemilik menyetor uang tunai Rp5.000.000 sebagai modal. Bagaimana jurnalnya?</p><p><b>Jawaban:</b> Debit Kas Rp5.000.000 dan Kredit Modal Rp5.000.000. Debit = Kredit.</p></div>
     `,
     ledger: `
         <h3>2. Buku Besar</h3>
@@ -5931,6 +6243,7 @@ const accountingLessons = {
         <h4>Cara menghitung</h4>
         <ol><li>Buat satu halaman/tabel untuk setiap akun.</li><li>Salin semua transaksi jurnal yang memakai akun tersebut.</li><li>Jumlahkan kolom Debit dan Kredit.</li><li>Hitung saldo: <b>Saldo = saldo normal + penambahan - pengurangan</b>.</li></ol>
         <div class="glass" style="padding:16px"><b>Contoh Kas:</b> Debit Rp10.000.000, kemudian Kredit Rp2.000.000 → saldo Kas = Rp8.000.000.</div>
+        <div class="lesson-example"><h4>📖 Contoh Soal Mudah</h4><p><b>Soal:</b> Saldo awal Kas Rp5.000.000, menerima Rp2.000.000, lalu membayar listrik Rp500.000. Berapa saldo Kas?</p><p><b>Jawaban:</b> Rp5.000.000 + Rp2.000.000 − Rp500.000 = Rp6.500.000.</p></div>
     `,
     trial: `
         <h3>3. Neraca Saldo</h3>
@@ -5938,12 +6251,14 @@ const accountingLessons = {
         <h4>Langkah manual</h4>
         <ol><li>Ambil saldo akhir setiap akun.</li><li>Masukkan akun bersaldo Debit ke kolom Debit.</li><li>Masukkan akun bersaldo Kredit ke kolom Kredit.</li><li>Jumlahkan kedua kolom.</li></ol>
         <p><b>Kontrol:</b> Total Debit harus sama dengan Total Kredit. Jika tidak sama, periksa kembali posting atau perhitungan Buku Besar.</p>
+        <div class="lesson-example"><h4>⚖️ Contoh Soal Mudah</h4><p><b>Soal:</b> Kas Rp6.000.000, Peralatan Rp4.000.000, Utang Rp2.000.000, Modal Rp8.000.000. Apakah seimbang?</p><p><b>Jawaban:</b> Debit Rp10.000.000 = Kredit Rp10.000.000, jadi seimbang.</p></div>
     `,
     adjustment: `
         <h3>4. Jurnal Penyesuaian</h3>
         <p>Jurnal Penyesuaian dibuat pada akhir periode agar pendapatan, beban, aset, dan kewajiban menunjukkan keadaan yang sebenarnya.</p>
         <ul><li>Beban dibayar di muka yang sudah terpakai → Debit Beban, Kredit Aset Dibayar di Muka.</li><li>Penyusutan → Debit Beban Penyusutan, Kredit Akumulasi Penyusutan.</li><li>Pendapatan masih harus diterima → Debit Piutang, Kredit Pendapatan.</li><li>Beban masih harus dibayar → Debit Beban, Kredit Utang.</li></ul>
         <p>Setelah penyesuaian, saldo yang telah disesuaikan digunakan untuk laporan keuangan.</p>
+        <div class="lesson-example"><h4>🛠️ Contoh Soal Mudah</h4><p><b>Soal:</b> Sewa dibayar di muka Rp1.200.000 untuk 12 bulan. Berapa beban sewa satu bulan?</p><p><b>Jawaban:</b> Rp1.200.000 ÷ 12 = Rp100.000. Debit Beban Sewa Rp100.000; Kredit Sewa Dibayar di Muka Rp100.000.</p></div>
     `,
     income: `
         <h3>5. Laporan Laba Rugi</h3>
@@ -5951,12 +6266,14 @@ const accountingLessons = {
         <div class="glass" style="padding:16px"><b>Rumus:</b><br>Laba Bersih = Total Pendapatan − Total Beban</div>
         <p>Jika hasil positif berarti laba. Jika hasil negatif berarti rugi. Modal, setoran pemilik, dan prive bukan pendapatan atau beban.</p>
         <p><b>Contoh:</b> Pendapatan Rp15.000.000 dan Beban Rp9.000.000 → Laba Bersih = Rp6.000.000.</p>
+        <div class="lesson-example"><h4>📈 Contoh Soal Mudah</h4><p><b>Soal:</b> Pendapatan Rp8.000.000 dan beban Rp5.000.000. Berapa laba?</p><p><b>Jawaban:</b> Rp8.000.000 − Rp5.000.000 = Rp3.000.000.</p></div>
     `,
     equity: `
         <h3>6. Perubahan Ekuitas</h3>
         <p>Laporan ini menjelaskan perubahan hak pemilik selama periode.</p>
         <div class="glass" style="padding:16px"><b>Rumus sederhana:</b><br>Ekuitas Akhir = Modal Awal + Investasi Tambahan + Laba Bersih − Prive/Dividen</div>
         <p>Prive dan dividen mengurangi ekuitas, sedangkan laba bersih menambah ekuitas.</p>
+        <div class="lesson-example"><h4>💼 Contoh Soal Mudah</h4><p><b>Soal:</b> Modal awal Rp10.000.000, tambahan modal Rp2.000.000, laba Rp3.000.000, prive Rp1.000.000.</p><p><b>Jawaban:</b> Modal akhir = Rp14.000.000.</p></div>
     `,
     balance: `
         <h3>7. Neraca / Laporan Posisi Keuangan</h3>
@@ -5964,30 +6281,35 @@ const accountingLessons = {
         <div class="glass" style="padding:16px"><b>Persamaan utama:</b><br>Aset = Liabilitas + Ekuitas</div>
         <p><b>Contoh:</b> Aset Rp25.000.000, Liabilitas Rp8.000.000 → Ekuitas harus Rp17.000.000 agar neraca seimbang.</p>
         <p>Jika tidak seimbang, periksa kembali jurnal, Buku Besar, penyesuaian, dan perhitungan ekuitas.</p>
+        <div class="lesson-example"><h4>🏦 Contoh Soal Mudah</h4><p><b>Soal:</b> Aset Rp20.000.000 dan liabilitas Rp7.000.000. Berapa ekuitas?</p><p><b>Jawaban:</b> Ekuitas = Rp20.000.000 − Rp7.000.000 = Rp13.000.000.</p></div>
     `,
     closing: `
         <h3>8. Jurnal Penutup</h3>
         <p>Jurnal Penutup menutup akun sementara pada akhir periode agar saldo periode berikutnya dimulai dengan benar.</p>
         <ol><li>Tutup Pendapatan ke Ikhtisar Laba/Rugi.</li><li>Tutup Beban ke Ikhtisar Laba/Rugi.</li><li>Tutup laba/rugi bersih ke Modal atau Laba Ditahan.</li><li>Tutup Prive/Dividen ke Modal atau akun ekuitas yang sesuai.</li></ol>
         <p>Akun aset, liabilitas, dan ekuitas permanen tidak ditutup ke nol.</p>
+        <div class="lesson-example"><h4>🔒 Contoh Soal Mudah</h4><p><b>Soal:</b> Pendapatan Rp6.000.000 dan beban Rp4.000.000. Berapa laba yang ditutup ke modal?</p><p><b>Jawaban:</b> Laba Rp2.000.000. Setelah pendapatan dan beban ditutup, laba bersih dipindahkan ke Modal.</p></div>
     `,
     cashflow: `
         <h3>9. Arus Kas Sederhana</h3>
         <p>Arus Kas menjelaskan perubahan kas selama periode.</p>
         <ul><li><b>Operasi:</b> penerimaan penjualan dan pembayaran beban.</li><li><b>Investasi:</b> pembelian/penjualan aset tetap.</li><li><b>Pendanaan:</b> setoran modal, pinjaman, atau pembayaran kembali pendanaan.</li></ul>
         <div class="glass" style="padding:16px"><b>Rumus sederhana:</b><br>Kas Akhir = Kas Awal + Arus Kas Bersih</div>
+        <div class="lesson-example"><h4>💵 Contoh Soal Mudah</h4><p><b>Soal:</b> Kas awal Rp5.000.000, arus operasi +Rp2.000.000, arus investasi −Rp1.000.000.</p><p><b>Jawaban:</b> Kas akhir = Rp6.000.000.</p></div>
     `,
     hpp: `
         <h3>10. HPP (Harga Pokok Penjualan)</h3>
         <p>Untuk perusahaan dagang, HPP dapat dihitung dari persediaan awal, pembelian bersih, dan persediaan akhir.</p>
         <div class="glass" style="padding:16px"><b>Rumus:</b><br>HPP = Persediaan Awal + Pembelian Bersih − Persediaan Akhir</div>
         <p>Pastikan pembelian bersih sudah memperhitungkan retur pembelian dan potongan pembelian sesuai metode pencatatan yang digunakan.</p>
+        <div class="lesson-example"><h4>📦 Contoh Soal Mudah</h4><p><b>Soal:</b> Persediaan awal Rp3.000.000, pembelian bersih Rp7.000.000, persediaan akhir Rp2.000.000.</p><p><b>Jawaban:</b> HPP = Rp3.000.000 + Rp7.000.000 − Rp2.000.000 = Rp8.000.000.</p></div>
     `,
     bep: `
         <h3>11. BEP (Break Even Point)</h3>
         <p>BEP adalah titik ketika total pendapatan sama dengan total biaya sehingga laba = 0.</p>
         <div class="glass" style="padding:16px"><b>BEP Unit:</b><br>Biaya Tetap ÷ (Harga Jual per Unit − Biaya Variabel per Unit)</div>
         <p><b>Contoh:</b> Biaya tetap Rp10.000.000, harga jual Rp50.000/unit, biaya variabel Rp30.000/unit → BEP = 10.000.000 ÷ 20.000 = <b>500 unit</b>.</p>
+        <div class="lesson-example"><h4>📊 Contoh Soal Mudah</h4><p><b>Soal:</b> Biaya tetap Rp4.000.000, harga jual Rp20.000/unit, biaya variabel Rp12.000/unit.</p><p><b>Jawaban:</b> BEP = Rp4.000.000 ÷ (Rp20.000 − Rp12.000) = 500 unit.</p></div>
     `,
     equation: `
         <h3>12. Persamaan Akuntansi</h3>
@@ -5995,6 +6317,7 @@ const accountingLessons = {
         <div class="glass" style="padding:16px"><b>Aset = Liabilitas + Ekuitas</b></div>
         <p>Contoh setoran modal tunai Rp10.000.000: Aset (Kas) bertambah Rp10.000.000 dan Ekuitas (Modal) bertambah Rp10.000.000, sehingga persamaan tetap seimbang.</p>
         <p>Contoh membeli peralatan tunai Rp3.000.000: satu aset (Peralatan) bertambah Rp3.000.000, sementara Kas berkurang Rp3.000.000. Total Aset tidak berubah dan persamaan tetap seimbang.</p>
+        <div class="lesson-example"><h4>🧮 Contoh Soal Mudah</h4><p><b>Soal:</b> Aset Rp15.000.000 dan liabilitas Rp5.000.000. Berapa ekuitas?</p><p><b>Jawaban:</b> Ekuitas = Rp10.000.000. Cek: Rp15.000.000 = Rp5.000.000 + Rp10.000.000.</p></div>
     `
 };
 
@@ -6455,75 +6778,6 @@ document
    REFRESH SEMUA FITUR
 ===================================================== */
 
-function openChangePassword(){
-  const email=(firebaseAuth?.currentUser?.email || currentUser?.email || '').trim();
-  const modal=document.getElementById('changePasswordModal');
-  const emailEl=document.getElementById('changePasswordEmail');
-  if(emailEl) emailEl.textContent=email || 'Email akun tidak tersedia';
-  if(!modal){ alert('Menu Ganti Password tidak tersedia.'); return; }
-  modal.style.display='flex'; modal.classList.add('open');
-}
-function closeChangePassword(){
-  const modal=document.getElementById('changePasswordModal');
-  if(modal){ modal.classList.remove('open'); modal.style.display='none'; }
-}
-async function sendPasswordResetFromWeb(){
-  const user=firebaseAuth?.currentUser;
-  const email=(user?.email || currentUser?.email || '').trim();
-  const status=document.getElementById('changePasswordStatus');
-  const btn=document.getElementById('sendPasswordResetBtn');
-  if(!email){ if(status){status.style.display='block';status.textContent='❌ Email akun tidak tersedia.';} return; }
-  if(btn){btn.disabled=true;btn.textContent='Mengirim...';}
-  if(status){status.style.display='block';status.textContent='Mengirim email konfirmasi...';}
-  try{
-    const settings=(location.protocol==='http:' || location.protocol==='https:') ? {
-      url: location.origin + location.pathname + '?passwordReset=1',
-      handleCodeInApp:true
-    } : undefined;
-    if(settings) await firebaseAuth.sendPasswordResetEmail(email, settings);
-    else await firebaseAuth.sendPasswordResetEmail(email);
-    if(status) status.textContent='✅ Email konfirmasi ganti password sudah dikirim. Periksa Inbox, Spam, atau Promosi.';
-  }catch(error){
-    console.error('Password reset:',error);
-    if(status) status.textContent='❌ Gagal mengirim: '+(friendlyFirebaseError(error)||error.message||'Kesalahan Firebase');
-  }finally{if(btn){btn.disabled=false;btn.textContent='📧 Kirim Konfirmasi';}}
-}
-function handlePasswordResetLink(){
-  const params=new URLSearchParams(location.search);
-  if(params.get('passwordReset')!=='1' || !params.get('oobCode')) return;
-  const modal=document.getElementById('resetPasswordPage');
-  if(!modal)return;
-  const code=params.get('oobCode');
-  try{
-    firebaseAuth.verifyPasswordResetCode(code).then(email=>{
-      document.getElementById('resetAccountText').textContent='Akun: '+email+'. Silakan buat password baru.';
-      modal.style.display='flex'; modal.classList.add('open');
-      window.__passwordResetCode=code;
-    }).catch(err=>{ alert('Tautan reset password tidak valid atau sudah kedaluwarsa.'); console.error(err); });
-  }catch(e){console.error(e);}
-}
-async function confirmNewPassword(e){
-  e.preventDefault();
-  const p=document.getElementById('newPasswordInput').value;
-  const c=document.getElementById('newPasswordConfirm').value;
-  const status=document.getElementById('resetPasswordStatus');
-  if(p!==c){status.style.display='block';status.textContent='❌ Password tidak sama.';return;}
-  try{
-    await firebaseAuth.confirmPasswordReset(window.__passwordResetCode,p);
-    status.style.display='block';status.textContent='✅ Password berhasil diganti. Silakan login menggunakan password baru.';
-  }catch(err){status.style.display='block';status.textContent='❌ '+(friendlyFirebaseError(err)||err.message);}
-}
-function changeGlobalCurrency(value){
-  window.appCurrency=value;
-  try{localStorage.setItem('glassAccountCurrency',value);}catch(e){}
-  if(typeof refreshEverything==='function') refreshEverything();
-}
-function loadGlobalCurrency(){
-  const value=localStorage.getItem('glassAccountCurrency')||'IDR';
-  window.appCurrency=value;
-  const s=document.getElementById('profileCurrencySelect'); if(s)s.value=value;
-}
-
 function refreshEverything() {
 
     updatePeriodUI();
@@ -6627,6 +6881,89 @@ body.app-authenticated #authScreen{display:none!important;visibility:hidden!impo
 #authScreen .auth-tab,#authScreen .auth-submit{cursor:pointer!important;}
 #authScreen .auth-form{display:none!important;}
 #authScreen .auth-form.active{display:block!important;}
+
+/* PROFILE ACCOUNT BAR */
+.profile{position:relative;cursor:pointer;user-select:none;transition:transform .2s ease,background .2s ease;}
+.profile:hover{transform:translateY(-1px);}
+.profile:focus-visible{outline:2px solid #6366f1;outline-offset:2px;}
+.profile-menu{display:none !important;pointer-events:none;position:absolute;right:0;top:calc(100% + 10px);width:300px;padding:14px;border:1px solid var(--border);border-radius:20px;background:var(--glass);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);box-shadow:0 18px 50px rgba(15,23,42,.18);z-index:9999;display:none;animation:profileDrop .18s ease-out;}
+.profile-menu.open{display:none !important;pointer-events:none;}
+@keyframes profileDrop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.profile-menu-head{display:flex;align-items:center;gap:11px;padding:4px 4px 13px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.profile-menu-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;background:linear-gradient(135deg,#06b6d4,#6366f1);flex:none;}
+.profile-menu-name{font-weight:800;font-size:14px;}
+.profile-menu-email{font-size:12px;color:var(--muted);margin-top:2px;word-break:break-all;}
+.profile-menu-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#16a34a;margin-top:5px;}
+.profile-menu-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.12);}
+.profile-menu-item{width:100%;display:flex;align-items:center;gap:10px;padding:11px 10px;border:0;border-radius:12px;background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer;}
+.profile-menu-item:hover{background:rgba(99,102,241,.10);}
+.profile-menu-item .pm-icon{width:25px;text-align:center;font-size:17px;}
+.profile-menu-divider{height:1px;background:var(--border);margin:7px 4px;}
+.profile-menu-logout{color:#ef4444;}
+.profile-menu-note{font-size:11px;color:var(--muted);line-height:1.5;padding:8px 10px 3px;}
+@media (max-width:900px){.profile-menu{right:-5px;width:min(300px,calc(100vw - 24px));}}
+
+.profile-page-card{padding:24px;max-width:980px;margin:0 auto;}
+.profile-page-hero{display:flex;align-items:center;gap:20px;padding:22px;border-radius:24px;margin-bottom:18px;}
+.profile-page-photo-wrap{position:relative;flex:none;}
+.profile-page-photo,.profile-avatar-image{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:38px;font-weight:800;background:linear-gradient(135deg,#06b6d4,#6366f1);background-size:cover;background-position:center;box-shadow:0 10px 30px rgba(15,23,42,.18);border:3px solid rgba(255,255,255,.65);}
+.profile-page-photo.has-profile-photo,.profile-menu-avatar.has-profile-photo,.avatar.has-profile-photo{background-repeat:no-repeat;background-position:center;background-size:cover;color:transparent;}
+.profile-photo-edit{position:absolute;right:0;bottom:0;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--primary);color:#fff;border:3px solid var(--bg);cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,.15);}
+.profile-page-main h2{margin:0 0 5px;font-size:24px;}.profile-page-main p{margin:0 0 9px;color:var(--muted);}.profile-active-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#16a34a;background:rgba(34,197,94,.1);padding:6px 10px;border-radius:999px;}
+.profile-page-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}.profile-info-card{padding:20px;border-radius:20px;}.profile-info-card h4{margin:0 0 14px;font-size:16px;}.profile-info-row{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;}.profile-info-row:last-child{border-bottom:0;}.profile-info-row span{color:var(--muted);}.profile-info-row b{word-break:break-word;text-align:right;}.profile-ok{color:#16a34a;}.profile-help{font-size:13px;color:var(--muted);line-height:1.6;}.profile-photo-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}.profile-photo-actions label.btn{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}.profile-photo-status{font-size:12px;color:var(--danger);margin-top:12px;min-height:18px;}.profile-photo-status.success{color:#16a34a;}.profile-setting-block{padding:4px 0}.profile-setting-block label{display:block;margin-bottom:7px}.profile-setting-block .form-control{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:13px;border:1px solid var(--border);background:rgba(255,255,255,.18);color:var(--text);outline:none}.currency-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.5}.profile-settings-card{min-height:100%;}
+.profile-menu-avatar{background-size:cover;background-position:center;background-repeat:no-repeat;}
+.avatar{background-size:cover;background-position:center;background-repeat:no-repeat;}
+@media(max-width:700px){.profile-page-hero{align-items:flex-start;}.profile-page-grid{grid-template-columns:1fr;}.profile-page-photo{width:86px;height:86px;font-size:30px;}}
 </style>
 
-</body>
+</body><style>
+/* Profil kembali ke tampilan overlay/fixed seperti sebelumnya */
+body.profile-mode #profile{
+  display:block !important;
+  position:fixed;
+  z-index:40;
+  left:250px;
+  top:0;
+  width:calc(100vw - 250px);
+  height:100vh;
+  box-sizing:border-box;
+  padding:32px 34px;
+  overflow-y:auto;
+  background:var(--bg);
+  pointer-events:auto;
+}
+body.profile-mode #profile .profile-page-card{
+  width:min(980px,100%);
+  max-width:980px;
+  margin:0 auto;
+  background:rgba(255,255,255,.30);
+  border:1px solid rgba(255,255,255,.62);
+  backdrop-filter:blur(26px) saturate(145%);
+  -webkit-backdrop-filter:blur(26px) saturate(145%);
+  box-shadow:0 22px 70px rgba(99,102,241,.15);
+}
+body.profile-mode .main{
+  visibility:hidden;
+}
+@media(max-width:900px){
+  body.profile-mode #profile{
+    left:0;
+    width:100vw;
+    padding:24px 20px;
+  }
+}
+@media(max-width:650px){
+  body.profile-mode #profile{padding:18px 15px;}
+}
+
+/* CHANGE PASSWORD MODAL */
+.modal-overlay{position:fixed!important;inset:0!important;display:none;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;background:rgba(15,23,42,.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2147483000!important;pointer-events:auto!important;}
+.modal-overlay[aria-hidden="false"]{display:flex!important;}
+.modal{position:relative;box-sizing:border-box;border:1px solid var(--border);border-radius:22px;background:var(--glass);color:var(--text);box-shadow:0 25px 80px rgba(15,23,42,.25);pointer-events:auto!important;}
+.modal-overlay .modal{display:block!important;visibility:visible!important;opacity:1!important;}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid var(--border);}
+.modal-header h3{margin:0 0 4px;}
+.modal-header span{font-size:12px;color:var(--muted);}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:0 20px 20px;}
+.modal .btn,.modal .icon-btn{pointer-events:auto!important;cursor:pointer!important;}
+</style>
