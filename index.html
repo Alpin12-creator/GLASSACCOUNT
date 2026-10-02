@@ -5076,6 +5076,23 @@ function getBaseProfile(user, username) {
 }
 
 async function saveNewUserData(user, username) {
+  // Akun baru mendapat bonus 300 Star satu kali saat proses Register.
+  // Cache diisi lebih dulu agar bonus tetap terlihat/tersimpan walaupun
+  // koneksi database sempat gagal; initializeStarSystem() kemudian akan
+  // menyinkronkannya kembali ke Firebase. Akun lama tidak disentuh.
+  try {
+    cacheStarState({
+      ...STAR_DEFAULT_STATE,
+      stars:300,
+      lastDailyLogin:null,
+      dailyStreakDay:0,
+      purchased:[],
+      equipped:"aurora"
+    });
+  } catch (err) {
+    console.warn("Gagal menyiapkan bonus 300 Star untuk akun baru:", err);
+  }
+
   try {
     const base = {
       name: username,
@@ -5098,6 +5115,31 @@ async function saveNewUserData(user, username) {
     ]);
   } catch (err) {
     console.warn("Profil/data database tidak tersimpan. Authentication tetap berhasil:", err);
+  }
+
+  // Tulis bonus Star secara terpisah supaya kegagalan penyimpanan profil
+  // atau username tidak ikut membatalkan hadiah akun baru.
+  try {
+    await Promise.race([
+      db.ref("users/" + user.uid + "/starState").set({
+        stars:300,
+        lastDailyLogin:null,
+        dailyStreakDay:0,
+        purchased:[],
+        equipped:"aurora"
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Database timeout")), 3000))
+    ]);
+    cacheStarState({
+      ...STAR_DEFAULT_STATE,
+      stars:300,
+      lastDailyLogin:null,
+      dailyStreakDay:0,
+      purchased:[],
+      equipped:"aurora"
+    });
+  } catch (err) {
+    console.warn("Bonus 300 Star belum tersimpan ke database; akan disinkronkan saat aplikasi dimuat:", err);
   }
 }
 
